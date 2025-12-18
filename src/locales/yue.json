@@ -1,0 +1,130 @@
+{
+  "app": {
+    "title": "React应用",
+    "nav": {
+      "home": "首页",
+      "about": "關於"
+    },
+    "footer": "使用React Router、Tailwind CSS同代理配置嘅React項目"
+  },
+  "register": {
+    "title": "註冊",
+    "subtitle": "創建您嘅賬號開始使用",
+    "username": "用戶名",
+    "usernamePlaceholder": "請輸入用戶名",
+    "password": "密碼",
+    "passwordPlaceholder": "請輸入密碼",
+    "confirmPassword": "確認密碼",
+    "confirmPasswordPlaceholder": "請確認密碼",
+    "phone": "手機號碼",
+    "getCode": "獲取驗證碼",
+    "phoneVerificationCode": "手機驗證碼",
+    "email": "郵箱地址",
+    "emailVerificationCode": "郵箱驗證碼",
+    "userType": "用戶類型",
+    "userTypeStudent": "學生 / 愛好者",
+    "userTypeExpert": "中醫師 / 專家",
+    "submitting": "註冊中...",
+    "register": "註冊"
+  },
+  "profile": {
+    "loading": "加載中...",
+    "title": "個人中心",
+    "subtitle": "管理您的賬戶和偏好設定",
+    "userInfo": "用戶資訊",
+    "username": "用戶名",
+    "realName": "真實姓名",
+    "userId": "用戶ID",
+    "role": "角色",
+    "status": "狀態",
+    "tokenExpireTime": "令牌過期時間",
+    "features": "功能",
+    "editProfile": "編輯個人資料",
+    "editProfileDesc": "更新您的個人資訊",
+    "changePassword": "修改密碼",
+    "changePasswordDesc": "更新您的賬戶密碼",
+    "myFavorites": "我的收藏",
+    "myFavoritesDesc": "查看您收藏的內容",
+    "myCourses": "我的課程",
+    "myCoursesDesc": "查看您已報名的課程",
+    "notSet": "未設定",
+    "notAvailable": "不可用"
+  },
+  "login": {
+    "alreadyHaveAccount": "已有賬號？",
+    "login": "登錄"
+  },
+  "home": {
+    "title": "首頁",
+    "welcome": "歡迎使用已配置React Router、Tailwind CSS同代理嘅React項目！",
+    "fetchButton": "獲取數據（API示例）",
+    "loading": "加載中...",
+    "error": "獲取數據失敗",
+    "fetchedData": "獲取嘅數據：",
+    "features": {
+      "title": "包含嘅功能：",
+      "router": "React Router用於導航",
+      "tailwind": "Tailwind CSS用於樣式",
+      "axios": "Axios用於API請求",
+      "proxy": "Vite代理用於API路由"
+    },
+    "tcm": {
+      "welcomeTitle": "歡迎嚟到智慧中醫",
+      "todayInfo": "今日宜忌：立冬。宜補冬，忌生冷。",
+      "aiConsultation": "AI 問診",
+      "aiConsultationDesc": "立即諮詢健康問題",
+      "professionalCourses": "職看課程",
+      "professionalCoursesDesc": "學習會生知識",
+      "professionalArticles": "專業文章",
+      "professionalArticlesDesc": "閱讀中醫知識",
+      "participateDiscussions": "參與討論",
+      "participateDiscussionsDesc": "瀏覽最新話題",
+      "recommendedVideos": "推薦影片",
+      "viewMore": "查看更多",
+      "videoTitle": "居家常用五大穴位按摩教學",
+      "videoDesc": "學習合谷、足三里、內關等常用穴位嘅基礎位置與按摩手法，緩解日常小病痛。",
+      "videoViews": "1200次觀看",
+      "videoDate": "1週前",
+      "popularDiscussions": "熱門討論",
+      "discussionTitle": "請問失眠有什麼好嘅食療建議？",
+      "discussionContent": "最近工作壓力大，晚上好難入睡，常常半夜醒來，聽說酸棗仁有效，請問大家有推薦嘅食譜或用法嗎？不想一直依賴安眠藥。",
+      "discussionDate": "2小時前",
+      "healthClock": "養生時鐘",
+      "timePeriod": "申時",
+      "timeRange": "15:00 - 17:00",
+      "timeAdvice": "膀胱經當令，宜多喝水"
+    }
+  },
+  "about": {
+    "title": "關於頁面",
+    "description": "呢個係一個標準嘅React項目模板，具有以下功能：",
+    "features": {
+      "router": {
+        "title": "React Router",
+        "description": "配置用於頁面之間嘅客戶端導航。"
+      },
+      "tailwind": {
+        "title": "Tailwind CSS",
+        "description": "用於快速同響應式樣式嘅實用優先CSS框架。"
+      },
+      "proxy": {
+        "title": "API代理",
+        "description": "配置用於處理API請求嘅Vite代理。"
+      },
+      "axios": {
+        "title": "Axios",
+        "description": "用於使用promises進行API調用嘅HTTP客戶端。"
+      }
+    },
+    "howToUse": {
+      "title": "使用方法：",
+      "steps": [
+        "運行npm run dev啟動開發服務器",
+        "使用導航菜單喺首頁同關於頁面之間導航",
+        "使用首頁上嘅API獲取按鈕測試代理功能",
+        "喺vite.config.js中自定義代理配置",
+        "喺src/pages目錄中添加更多頁面"
+      ]
+    }
+  }
+}

@@ -1,0 +1,10 @@
+/* App.css - Additional custom styles can be added here */
+/* Most styling is handled by Tailwind CSS */
+body {
+  background-color: #fcfbf7;
+  color: #1e293b;
+}
+.dark body {
+  background-color: #0c0a09;
+  color: #e2e21e;
+}

@@ -1,0 +1,132 @@
+{
+  "app": {
+    "title": "React App",
+    "nav": {
+      "home": "Home",
+      "about": "About",
+      "forum": "Forum"
+    },
+    "footer": "React Project with Router, Tailwind CSS and Proxy"
+  },
+  "register": {
+    "title": "Create Account",
+    "subtitle": "Join us to explore the world of Traditional Chinese Medicine",
+    "username": "Username",
+    "usernamePlaceholder": "Enter your username",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "confirmPassword": "Confirm Password",
+    "confirmPasswordPlaceholder": "Confirm your password",
+    "phone": "Phone Number",
+    "getCode": "Get Code",
+    "phoneVerificationCode": "Phone Verification Code",
+    "email": "Email Address",
+    "emailVerificationCode": "Email Verification Code",
+    "getEmailCode": "Get Email Code",
+    "getPhoneCode": "Get Phone Code",
+    "userType": "User Type",
+    "userTypeStudent": "Student / Enthusiast",
+    "userTypeExpert": "TCM Practitioner / Expert",
+    "submitting": "Registering...",
+    "register": "Register",
+    "loginNow": "Already have an account? Login now",
+    "alreadyHaveAccount": "Already have an account?",
+    "login": "Login"
+  },
+  "profile": {
+    "loading": "Loading...",
+    "title": "Personal Center",
+    "subtitle": "Manage your account and preferences",
+    "userInfo": "User Information",
+    "username": "Username",
+    "realName": "Real Name",
+    "userId": "User ID",
+    "role": "Role",
+    "status": "Status",
+    "tokenExpireTime": "Token Expire Time",
+    "features": "Features",
+    "editProfile": "Edit Profile",
+    "editProfileDesc": "Update your personal information",
+    "changePassword": "Change Password",
+    "changePasswordDesc": "Update your account password",
+    "myFavorites": "My Favorites",
+    "myFavoritesDesc": "View your favorite content",
+    "myCourses": "My Courses",
+    "myCoursesDesc": "View your enrolled courses",
+    "notSet": "Not Set",
+    "notAvailable": "Not Available"
+  },
+  "home": {
+    "title": "Home Page",
+    "welcome": "Welcome to the React project with Router, Tailwind CSS and Proxy configured!",
+    "fetchButton": "Fetch Data (API Example)",
+    "loading": "Loading...",
+    "error": "Failed to fetch data",
+    "fetchedData": "Fetched Data:",
+    "features": {
+      "title": "Features Included:",
+      "router": "React Router for navigation",
+      "tailwind": "Tailwind CSS for styling",
+      "axios": "Axios for API requests",
+      "proxy": "Vite proxy for API routing"
+    },
+    "tcm": {
+      "welcomeTitle": "Welcome to Smart TCM",
+      "todayInfo": "Today's宜忌: Lidong. 宜 replenish nutrients, 忌 raw and cold food.",
+      "aiConsultation": "AI Consultation",
+      "aiConsultationDesc": "Consult health issues immediately",
+      "professionalCourses": "Professional Courses",
+      "professionalCoursesDesc": "Learn health knowledge",
+      "professionalArticles": "Professional Articles",
+      "professionalArticlesDesc": "Read TCM knowledge",
+      "participateDiscussions": "Join Discussions",
+      "participateDiscussionsDesc": "Browse latest topics",
+      "recommendedVideos": "Recommended Videos",
+      "viewMore": "View More",
+      "videoTitle": "Five Common Acupoint Massage Techniques at Home",
+      "videoDesc": "Learn basic positions and massage techniques for common acupoints like Hegu, Zusanli, and Neiguan to relieve daily minor ailments.",
+      "videoViews": "1200 views",
+      "videoDate": "1 week ago",
+      "popularDiscussions": "Popular Discussions",
+      "discussionTitle": "Any good dietary recommendations for insomnia?",
+      "discussionContent": "Recently, I'm under a lot of work pressure and have trouble falling asleep at night, often waking up in the middle of the night. I heard that Suanzaoren is effective. Do you have any recommended recipes or usage methods? I don't want to rely on sleeping pills all the time.",
+      "discussionDate": "2 hours ago",
+      "healthClock": "Health Clock",
+      "timePeriod": "Shenshi",
+      "timeRange": "15:00 - 17:00",
+      "timeAdvice": "Bladder meridian active, drink more water"
+    }
+  },
+  "about": {
+    "title": "About Page",
+    "description": "This is a standard React project template with the following features:",
+    "features": {
+      "router": {
+        "title": "React Router",
+        "description": "Configured for client-side navigation between pages."
+      },
+      "tailwind": {
+        "title": "Tailwind CSS",
+        "description": "Utility-first CSS framework for fast and responsive styling."
+      },
+      "proxy": {
+        "title": "API Proxy",
+        "description": "Vite proxy configured for handling API requests."
+      },
+      "axios": {
+        "title": "Axios",
+        "description": "HTTP client for making API calls with promises."
+      }
+    },
+    "howToUse": {
+      "title": "How to Use:",
+      "steps": [
+        "Run npm run dev to start the development server",
+        "Navigate between Home and About pages using the navigation menu",
+        "Use the API fetch button on the Home page to test proxy functionality",
+        "Customize the proxy configuration in vite.config.js",
+        "Add more pages in the src/pages directory"
+      ]
+    }
+  }
+}
