@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import VideoList from '../components/VideoList';
+import HealthClock from '../components/HealthClock';
 
 const HomePage = () => {
   const { t } = useTranslation();
@@ -122,21 +123,7 @@ const HomePage = () => {
         </div>
 
         {/* Right Column - Health Clock */}
-        <div>
-          <div className="bg-green-50 border border-green-100 rounded-lg p-4 shadow-sm">
-            <div className="flex items-center mb-4">
-              <svg className="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <h2 className="text-lg font-bold text-gray-800">{t('home.tcm.healthClock')}</h2>
-            </div>
-            <div className="text-center py-6">
-              <h3 className="text-4xl font-bold text-green-800 mb-2">{t('home.tcm.timePeriod')}</h3>
-              <p className="text-sm text-gray-600 mb-4">{t('home.tcm.timeRange')}</p>
-              <p className="text-sm text-gray-700">{t('home.tcm.timeAdvice')}</p>
-            </div>
-          </div>
-        </div>
+        <HealthClock />
       </div>
       
       {/* Video List Section */}

@@ -7,6 +7,7 @@ import VideoPlaybackPage from './pages/VideoPlaybackPage';
 import ArticleDetailPage from './pages/ArticleDetailPage';
 import RegisterPage from './pages/RegisterPage';
 import ProfilePage from './pages/ProfilePage';
+import MeridianFlowPage from './pages/MeridianFlowPage';
 import { useTranslation } from 'react-i18next';
 import LanguageSwitcher from './components/LanguageSwitcher';
 import LoginModal from './components/LoginModal';
@@ -247,6 +248,7 @@ const handleLogout = () => {
             <Route path="/video/:videoId" element={<VideoPlaybackPage isLoggedIn={isLoggedIn} onOpenLoginModal={() => setIsLoginModalOpen(true)} />} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/meridian-flow" element={<MeridianFlowPage />} />
           </Routes>
         </main>
 

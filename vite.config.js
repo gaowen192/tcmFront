@@ -9,6 +9,7 @@ export default defineConfig({
     proxy: {
       '/api': {
         target: 'http://localhost:8080', // Real API server address
+        //target: 'http://95.40.33.105:8080', // Real API server address
         changeOrigin: true,
         secure: false,
         // Forward requests to the real API server
