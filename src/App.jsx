@@ -105,7 +105,8 @@ const handleLogout = () => {
   const navItems = [
     { id: 'home', label: t('app.nav.home'), icon: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>, path: '/' },
     { id: 'professionalArticles', label: '专业文章', icon: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>, path: '/professional-articles' },
-    { id: 'forum', label: t('app.nav.forum'), icon: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>, path: '/forum' }
+    { id: 'forum', label: t('app.nav.forum'), icon: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>, path: '/forum' },
+    { id: 'profile', label: isLoggedIn ? '个人中心' : '登录', icon: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>, path: isLoggedIn ? '/profile' : '#', action: isLoggedIn ? null : () => setIsLoginModalOpen(true) }
   ];
   
   return (
@@ -125,81 +126,90 @@ const handleLogout = () => {
                   <span className="text-sm font-normal ml-1">Intelligent CM</span>
                 </Link>
               </div>
-              <div className="flex items-center rounded-lg space-x-4">
+              <div className="flex items-center rounded-lg space-x-2">
                 {/* Desktop Navigation */}
-                <Link 
-                  to="/" 
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'home' ? 'bg-green-100 text-green-800' : 'text-gray-700 hover:bg-[rgb(240_253_244/var(--tw-bg-opacity,1))] hover:text-green-800'}`}
-                  onClick={() => setActiveTab('home')}
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-                  {t('app.nav.home')}
-                </Link>
-                <Link 
-                  to="/professional-articles" 
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'professionalArticles' ? 'bg-green-100 text-green-800' : 'text-gray-700 hover:bg-[rgb(240_253_244/var(--tw-bg-opacity,1))] hover:text-green-800'}`}
-                  onClick={() => setActiveTab('professionalArticles')}
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-                  专业文章
-                </Link>
-                <Link 
-                  to="/forum" 
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'forum' ? 'bg-green-100 text-green-800' : 'text-gray-700 hover:bg-[rgb(240_253_244/var(--tw-bg-opacity,1))] hover:text-green-800'}`}
-                  onClick={() => setActiveTab('forum')}
-                >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
-                  {t('app.nav.forum')}
-                </Link>
-                <LanguageSwitcher />
+                <div className="hidden md:flex items-center space-x-2">
+                  <Link 
+                    to="/" 
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'home' ? 'bg-green-100 text-green-800' : 'text-gray-700 hover:bg-[rgb(240_253_244/var(--tw-bg-opacity,1))] hover:text-green-800'}`}
+                    onClick={() => setActiveTab('home')}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    {t('app.nav.home')}
+                  </Link>
+                  <Link 
+                    to="/professional-articles" 
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'professionalArticles' ? 'bg-green-100 text-green-800' : 'text-gray-700 hover:bg-[rgb(240_253_244/var(--tw-bg-opacity,1))] hover:text-green-800'}`}
+                    onClick={() => setActiveTab('professionalArticles')}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    专业文章
+                  </Link>
+                  <Link 
+                    to="/forum" 
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeTab === 'forum' ? 'bg-green-100 text-green-800' : 'text-gray-700 hover:bg-[rgb(240_253_244/var(--tw-bg-opacity,1))] hover:text-green-800'}`}
+                    onClick={() => setActiveTab('forum')}
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    {t('app.nav.forum')}
+                  </Link>
+                </div>
                 
-                {/* User Profile/Login */}
-                {isLoggedIn ? (
-                  <div className="relative">
+                {/* Desktop User Actions */}
+                <div className="hidden md:flex items-center space-x-2">
+                  <LanguageSwitcher />
+                  
+                  {/* User Profile/Login */}
+                  {isLoggedIn ? (
+                    <div className="relative">
+                      <button 
+                        onClick={() => setShowUserMenu(!showUserMenu)}
+                        className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-green-800 hover:bg-green-100 transition-all"
+                      >
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        {currentUser}
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                      </button>
+                      
+                      {/* User Menu Dropdown */}
+                      {showUserMenu && (
+                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-10">
+                          <Link 
+                            to="/profile"
+                            onClick={() => setShowUserMenu(false)}
+                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-green-100 hover:text-green-800 transition-colors"
+                          >
+                            个人中心
+                          </Link>
+                          <button 
+                            onClick={handleLogout}
+                            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-green-100 hover:text-green-800 transition-colors"
+                          >
+                            退出登录
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
                     <button 
-                      onClick={() => setShowUserMenu(!showUserMenu)}
+                      onClick={() => setIsLoginModalOpen(true)}
                       className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-green-800 hover:bg-green-100 transition-all"
                     >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                      {currentUser}
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                      登录
                     </button>
-                    
-                    {/* User Menu Dropdown */}
-                    {showUserMenu && (
-                      <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-10">
-                        <Link 
-                          to="/profile"
-                          onClick={() => setShowUserMenu(false)}
-                          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-green-100 hover:text-green-800 transition-colors"
-                        >
-                          个人中心
-                        </Link>
-                        <button 
-                          onClick={handleLogout}
-                          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-green-100 hover:text-green-800 transition-colors"
-                        >
-                          退出登录
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <button 
-                    onClick={() => setIsLoginModalOpen(true)}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-green-800 hover:bg-green-100 transition-all"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                    登录
-                  </button>
-                )}
+                  )}
+                </div>
                 
                 {/* Mobile Menu Toggle */}
                 <button 
                   onClick={toggleMobileMenu}
-                  className="md:hidden px-4 py-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-green-100 hover:text-green-800"
+                  className="md:hidden p-2 rounded-lg text-sm font-medium text-gray-700 hover:bg-green-100 hover:text-green-800"
+                  aria-label="Toggle menu"
                 >
-                  Menu
+                  <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                  </svg>
                 </button>
               </div>
             </div>
@@ -207,8 +217,9 @@ const handleLogout = () => {
           
           {/* Mobile Navigation Menu */}
           {isMobileMenuOpen && (
-            <div className="md:hidden bg-white shadow-md">
-              <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+            <div className="md:hidden bg-white shadow-md border-t">
+              <nav className="p-4 space-y-2 overflow-y-auto">
+                {/* Mobile Navigation Links */}
                 {navItems.map((item) => (
                   <Link
                     key={item.id}
@@ -216,6 +227,9 @@ const handleLogout = () => {
                     onClick={() => {
                       setActiveTab(item.id);
                       toggleMobileMenu();
+                      if (item.action) {
+                        item.action();
+                      }
                     }}
                     className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium ${activeTab === item.id
                       ? 'bg-green-100 text-green-800'
@@ -225,6 +239,25 @@ const handleLogout = () => {
                     {item.label}
                   </Link>
                 ))}
+                
+                {/* Mobile Language Switcher */}
+                <div className="pt-4 border-t border-gray-100">
+                  <LanguageSwitcher />
+                </div>
+                
+                {/* Mobile Logout Button (if logged in) */}
+                {isLoggedIn && (
+                  <button
+                    onClick={() => {
+                      handleLogout();
+                      toggleMobileMenu();
+                    }}
+                    className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium text-gray-700 hover:bg-red-50 hover:text-red-600"
+                  >
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    退出登录
+                  </button>
+                )}
               </nav>
             </div>
           )}

@@ -373,6 +373,18 @@ api.interceptors.response.use(
   (error) => {
     // Handle response error
     console.log('=============== API Response Error:', error.response?.status || error.message);
+    
+    // Handle 401 Unauthorized error (JWT token expired or invalid)
+    if (error.response?.status === 401 || error.response?.data?.code === 401) {
+      console.log('=============== 401 Unauthorized: Clearing localStorage and redirecting to homepage');
+      
+      // Clear localStorage
+      localStorage.clear();
+      
+      // Redirect to homepage
+      window.location.href = '/';
+    }
+    
     return Promise.reject(error);
   }
 );
