@@ -38,16 +38,32 @@ const ProfessionalArticlesPage = () => {
     try {
       const params = {
         page: currentPage,
-        pageSize: pageSize,
-        title: searchTitle
+        pageSize: pageSize
       };
+      // Only add title parameter if searchTitle is not empty
+      if (searchTitle && searchTitle.trim()) {
+        params.title = searchTitle.trim();
+      }
       const response = await fetchArticles(params);
+      console.log('=============== Articles API Response:', response);
+      console.log('=============== Response data structure:', response?.data);
+      
       if (response && response.code === 200) {
-        setArticles(response.data.articles);
-        setTotalPages(response.data.totalPages);
-        setTotalElements(response.data.totalElements);
+        // Handle different response data structures
+        const articlesData = response.data?.articles || response.data?.content || [];
+        const totalPagesData = response.data?.totalPages || 0;
+        const totalElementsData = response.data?.totalElements || 0;
+        
+        console.log('=============== Parsed data:');
+        console.log('=============== - Articles count:', articlesData.length);
+        console.log('=============== - Total Pages:', totalPagesData);
+        console.log('=============== - Total Elements:', totalElementsData);
+        
+        setArticles(articlesData);
+        setTotalPages(totalPagesData);
+        setTotalElements(totalElementsData);
       } else {
-        setError('Failed to fetch articles: ' + response.message);
+        setError('Failed to fetch articles: ' + (response?.message || 'Unknown error'));
       }
     } catch (err) {
       console.error("=============== Error loading articles:", err);
@@ -114,6 +130,16 @@ const ProfessionalArticlesPage = () => {
       month: '2-digit',
       day: '2-digit'
     });
+  };
+
+  // Helper function to strip HTML tags
+  const stripHtmlTags = (html) => {
+    if (!html) return '';
+    // Create a temporary div element to parse HTML
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    // Get text content and replace multiple spaces/newlines with single space
+    return (tmp.textContent || tmp.innerText || '').replace(/\s+/g, ' ').trim();
   };
 
   return (
@@ -250,7 +276,7 @@ const ProfessionalArticlesPage = () => {
                   <Link to={`/professional-articles/${article.id}`} className="block">
                     <h3 className="text-xl font-semibold mb-2 text-green-800 hover:text-green-600 transition-colors">{article.title}</h3>
                   </Link>
-                  <p className="text-gray-600 mb-3 line-clamp-2">{article.content}</p>
+                  <p className="text-gray-600 mb-3 line-clamp-2">{stripHtmlTags(article.content)}</p>
                   
                   {/* Tags */}
                   {article.tags && (

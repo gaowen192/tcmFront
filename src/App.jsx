@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import ProfessionalArticlesPage from './pages/ProfessionalArticlesPage';
 import ForumPage from './pages/ForumPage';
@@ -15,14 +15,29 @@ import { login } from './services/api';
 import './App.css';
 import React, { useState, useEffect } from 'react';
 
-function App() {
+function AppContent() {
   const { t } = useTranslation();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState('home');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
+  // Update activeTab based on current location
+  useEffect(() => {
+    const path = location.pathname;
+    if (path === '/') {
+      setActiveTab('home');
+    } else if (path.startsWith('/professional-articles')) {
+      setActiveTab('professionalArticles');
+    } else if (path.startsWith('/forum')) {
+      setActiveTab('forum');
+    } else if (path.startsWith('/profile')) {
+      setActiveTab('profile');
+    }
+  }, [location.pathname]);
 
   // Check login status on component mount
   useEffect(() => {
@@ -110,8 +125,7 @@ const handleLogout = () => {
   ];
   
   return (
-    <Router>
-      <div className="min-h-screen bg-[#fcfbf7]">
+    <div className="min-h-screen bg-[#fcfbf7]">
         {/* Navigation */}
         <nav className="bg-white shadow-md">
           <div className="container mx-auto px-4">
@@ -294,6 +308,13 @@ const handleLogout = () => {
           </div>
         </footer> */}
       </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }

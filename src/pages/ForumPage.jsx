@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import api from '../services/api';
@@ -37,24 +37,126 @@ function ForumPage({ isLoggedIn, onOpenLoginModal }) {
 
 
 
+  // Fetch forum posts from real API with pagination
+  const fetchPosts = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      console.log('=============== Fetching forum posts from real API...');
+      
+      let response;
+      let postsData;
+      let total;
+      let totalPages;
+      
+      // Use search API - only pass keyword parameter
+      const keyword = searchTerm || '';
+      response = await api.searchPosts(keyword, currentPage - 1, pageSize);
+      
+      if (response && response.code === 200) {
+        postsData = response.data.content || response.data.list;
+        total = response.data.totalElements || response.data.total;
+        totalPages = response.data.totalPages || response.data.pages;
+      }
+      
+      // Handle API response
+      if (postsData) {
+        // Helper function to strip HTML tags
+        const stripHtmlTags = (html) => {
+          if (!html) return '';
+          // Create a temporary div element to parse HTML
+          const tmp = document.createElement('div');
+          tmp.innerHTML = html;
+          // Get text content and replace multiple spaces/newlines with single space
+          return (tmp.textContent || tmp.innerText || '').replace(/\s+/g, ' ').trim();
+        };
+        
+        // Transform API data to match component expectations
+        const formattedPosts = postsData.map(post => {
+          // Strip HTML tags and get plain text
+          const plainText = stripHtmlTags(post.content);
+          // Truncate to 150 characters
+          const truncatedContent = plainText.substring(0, 150) + (plainText.length > 150 ? '...' : '');
+          
+          return {
+            id: post.id,
+            author: `用户${post.userId}`, // Since we don't have actual author names in API response
+            date: new Date(post.createdAt).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
+            replies: post.replyCount,
+            title: post.title,
+            content: truncatedContent,
+            likes: post.likeCount,
+            comments: post.replyCount, // Using reply count as comments
+            views: post.viewCount,
+            tags: post.tags ? post.tags.split(',').map(tag => `#${tag.trim()}`) : []
+          };
+        });
+        
+        setPosts(formattedPosts);
+        setTotalPages(totalPages);
+        setTotalPosts(total);
+        
+        console.log('=============== Posts fetched successfully:', formattedPosts.length);
+        console.log('=============== Total pages:', totalPages);
+        console.log('=============== Total posts:', total);
+      } else {
+        console.log('=============== API returned non-success response:', response?.data?.message || response?.message);
+        setPosts([]);
+      }
+    } catch (error) {
+      console.log('=============== Failed to fetch posts:', error.message);
+      setPosts([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [currentPage, pageSize, sortOption, searchTerm]);
+
   // Handle post creation
   const handleCreatePost = async (postData) => {
     try {
       console.log('=============== Creating post:', postData.title);
-      // Here you would typically call your create post API
-      // For now, we'll simulate a successful post creation
       
-      // Close post modal
-      setIsPostModalOpen(false);
+      // Get userId from localStorage
+      const userId = localStorage.getItem('userId');
+      if (!userId) {
+        alert('请先登录');
+        return;
+      }
       
-      // Refresh posts to show the new post
-      fetchPosts();
+      // Prepare post data for API
+      const createPostData = {
+        title: postData.title,
+        content: postData.content,
+        tags: postData.tags,
+        userId: parseInt(userId),
+        categoryId: 1, // Default category, adjust as needed
+        status: 1
+      };
       
-      // Show success message
-      alert('Post created successfully!');
+      // Call create post API
+      const response = await api.post('/tcm/posts', createPostData, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      console.log('=============== Create post response:', response.data);
+      
+      if (response.data && response.data.code === 200) {
+        // Close post modal
+        setIsPostModalOpen(false);
+        
+        // Reset to first page and refresh posts to show the new post
+        setCurrentPage(1);
+        await fetchPosts();
+        
+        // Show success message
+        alert('帖子发布成功！');
+      } else {
+        throw new Error(response.data?.message || '创建帖子失败');
+      }
     } catch (error) {
       console.error('=============== Failed to create post:', error);
-      alert('Failed to create post. Please try again later.');
+      alert(error.response?.data?.message || '创建帖子失败，请稍后重试');
     }
   };
 
@@ -131,84 +233,10 @@ function ForumPage({ isLoggedIn, onOpenLoginModal }) {
     }
   };
 
-  // Fetch forum posts from real API with pagination
+  // Fetch posts when dependencies change
   useEffect(() => {
-    const fetchPosts = async () => {
-      setIsLoading(true);
-      try {
-        console.log('=============== Fetching forum posts from real API...');
-        
-        let response;
-        let postsData;
-        let total;
-        let totalPages;
-        
-        if (searchTerm) {
-          // Use search API when search term is provided
-          response = await api.searchPosts(searchTerm, currentPage - 1, pageSize);
-          
-          if (response && response.code === 200) {
-            postsData = response.data.content || response.data.list;
-            total = response.data.totalElements || response.data.total;
-            totalPages = response.data.totalPages || response.data.pages;
-          }
-        } else {
-          // Use regular posts API when no search term
-          // Map sort option to API parameters
-          const params = {
-            page: currentPage,
-            pageSize: pageSize,
-            hotpost: sortOption === 'popular' ? 1 : 0,
-            isNew: sortOption === 'latest' ? 1 : 0
-          };
-          
-          // Use real API endpoint
-          response = await api.get('/tcm/posts/all', { params });
-          
-          if (response.data && response.data.code === 200) {
-            postsData = response.data.data.content;
-            total = response.data.data.totalElements || response.data.data.total;
-            totalPages = response.data.data.totalPages || response.data.data.pages;
-          }
-        }
-        
-        // Handle API response
-        if (postsData) {
-          // Transform API data to match component expectations
-          const formattedPosts = postsData.map(post => ({
-            id: post.id,
-            author: `用户${post.userId}`, // Since we don't have actual author names in API response
-            date: new Date(post.createdAt).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
-            replies: post.replyCount,
-            title: post.title,
-            content: post.content.substring(0, 150) + (post.content.length > 150 ? '...' : ''), // Truncate long content
-            likes: post.likeCount,
-            comments: post.replyCount, // Using reply count as comments
-            views: post.viewCount,
-            tags: post.tags ? post.tags.split(',').map(tag => `#${tag.trim()}`) : []
-          }));
-          
-          setPosts(formattedPosts);
-          setTotalPages(totalPages);
-          setTotalPosts(total);
-          
-          console.log('=============== Posts fetched successfully:', formattedPosts.length);
-          console.log('=============== Total pages:', totalPages);
-          console.log('=============== Total posts:', total);
-        } else {
-          console.log('=============== API returned non-success response:', response?.data?.message || response?.message);
-          setPosts([]);
-        }
-      } catch (error) {
-        console.log('=============== Failed to fetch posts:', error.message);
-        setPosts([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchPosts();
-  }, [currentPage, pageSize, sortOption, searchTerm]);
+  }, [fetchPosts]);
 
   return (
     <div className="container mx-auto max-w-5xl px-4 py-8">

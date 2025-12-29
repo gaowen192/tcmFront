@@ -1,697 +1,153 @@
 import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
-import { HEALTH_CLOCK_CONFIG, getCurrentHealthClock } from '../components/HealthClock';
+import { useNavigate } from 'react-router-dom';
+import imgSrc from '../assets/img.png';
 
-// 器官动画组件
-const OrganAnimation = ({ organKey }) => {
-  const animations = {
-    zi: { // 胆经
-      name: '胆',
-      svg: (
-        <svg viewBox="0 0 200 200" className="w-full h-full">
-          <defs>
-            <linearGradient id="gallGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#fef3c7" />
-              <stop offset="100%" stopColor="#fde68a" />
-            </linearGradient>
-            <animate id="pulse1" attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite" />
-          </defs>
-          <ellipse cx="100" cy="100" rx="60" ry="80" fill="url(#gallGradient)" opacity="0.8">
-            <animate attributeName="ry" values="80;90;80" dur="2s" repeatCount="indefinite" />
-          </ellipse>
-          <circle cx="100" cy="100" r="40" fill="none" stroke="#f59e0b" strokeWidth="2" opacity="0.6">
-            <animate attributeName="r" values="40;50;40" dur="2s" repeatCount="indefinite" />
-            <animate attributeName="opacity" values="0.6;0.9;0.6" dur="2s" repeatCount="indefinite" />
-          </circle>
-        </svg>
-      )
-    },
-    chou: { // 肝经
-      name: '肝',
-      svg: (
-        <svg viewBox="0 0 200 200" className="w-full h-full">
-          <defs>
-            <linearGradient id="liverGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#dcfce7" />
-              <stop offset="100%" stopColor="#86efac" />
-            </linearGradient>
-          </defs>
-          <path d="M 100 40 Q 140 60 150 100 Q 140 140 100 160 Q 60 140 50 100 Q 60 60 100 40 Z" fill="url(#liverGradient)" opacity="0.8">
-            <animate attributeName="opacity" values="0.8;1;0.8" dur="2s" repeatCount="indefinite" />
-          </path>
-          <path d="M 100 60 L 120 100 L 100 140 L 80 100 Z" fill="#10b981" opacity="0.6">
-            <animateTransform attributeName="transform" type="rotate" values="0 100 100;360 100 100" dur="8s" repeatCount="indefinite" />
-          </path>
-        </svg>
-      )
-    },
-    yin: { // 肺经
-      name: '肺',
-      svg: (
-        <svg viewBox="0 0 200 200" className="w-full h-full">
-          <defs>
-            <linearGradient id="lungGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#e0f2fe" />
-              <stop offset="100%" stopColor="#7dd3fc" />
-            </linearGradient>
-          </defs>
-          <ellipse cx="80" cy="100" rx="35" ry="70" fill="url(#lungGradient)" opacity="0.8">
-            <animate attributeName="ry" values="70;75;70" dur="3s" repeatCount="indefinite" />
-          </ellipse>
-          <ellipse cx="120" cy="100" rx="35" ry="70" fill="url(#lungGradient)" opacity="0.8">
-            <animate attributeName="ry" values="70;75;70" dur="3s" begin="0.5s" repeatCount="indefinite" />
-          </ellipse>
-          <circle cx="80" cy="100" r="20" fill="none" stroke="#0284c7" strokeWidth="2" opacity="0.5">
-            <animate attributeName="r" values="20;25;20" dur="3s" repeatCount="indefinite" />
-          </circle>
-          <circle cx="120" cy="100" r="20" fill="none" stroke="#0284c7" strokeWidth="2" opacity="0.5">
-            <animate attributeName="r" values="20;25;20" dur="3s" begin="0.5s" repeatCount="indefinite" />
-          </circle>
-        </svg>
-      )
-    },
-    mao: { // 大肠经
-      name: '大腸',
-      svg: (
-        <svg viewBox="0 0 200 200" className="w-full h-full">
-          <defs>
-            <linearGradient id="colonGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#fef3c7" />
-              <stop offset="100%" stopColor="#fcd34d" />
-            </linearGradient>
-          </defs>
-          <path d="M 40 100 Q 60 60 100 50 Q 140 60 160 100 Q 140 140 100 150 Q 60 140 40 100" fill="url(#colonGradient)" opacity="0.8">
-            <animate attributeName="d" values="M 40 100 Q 60 60 100 50 Q 140 60 160 100 Q 140 140 100 150 Q 60 140 40 100;M 40 100 Q 60 70 100 60 Q 140 70 160 100 Q 140 130 100 140 Q 60 130 40 100;M 40 100 Q 60 60 100 50 Q 140 60 160 100 Q 140 140 100 150 Q 60 140 40 100" dur="3s" repeatCount="indefinite" />
-          </path>
-        </svg>
-      )
-    },
-    chen: { // 胃经
-      name: '胃',
-      svg: (
-        <svg viewBox="0 0 200 200" className="w-full h-full">
-          <defs>
-            <linearGradient id="stomachGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#fce7f3" />
-              <stop offset="100%" stopColor="#f9a8d4" />
-            </linearGradient>
-          </defs>
-          <ellipse cx="100" cy="100" rx="70" ry="50" fill="url(#stomachGradient)" opacity="0.8">
-            <animate attributeName="rx" values="70;75;70" dur="2s" repeatCount="indefinite" />
-          </ellipse>
-          <ellipse cx="100" cy="100" rx="50" ry="35" fill="none" stroke="#ec4899" strokeWidth="2" opacity="0.6">
-            <animate attributeName="opacity" values="0.6;0.9;0.6" dur="2s" repeatCount="indefinite" />
-          </ellipse>
-        </svg>
-      )
-    },
-    si: { // 脾经
-      name: '脾',
-      svg: (
-        <svg viewBox="0 0 200 200" className="w-full h-full">
-          <defs>
-            <linearGradient id="spleenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#fef3c7" />
-              <stop offset="100%" stopColor="#fde047" />
-            </linearGradient>
-          </defs>
-          <ellipse cx="100" cy="100" rx="40" ry="60" fill="url(#spleenGradient)" opacity="0.8">
-            <animate attributeName="ry" values="60;65;60" dur="2.5s" repeatCount="indefinite" />
-          </ellipse>
-          <path d="M 100 50 L 120 100 L 100 150 L 80 100 Z" fill="#eab308" opacity="0.5">
-            <animateTransform attributeName="transform" type="rotate" values="0 100 100;360 100 100" dur="6s" repeatCount="indefinite" />
-          </path>
-        </svg>
-      )
-    },
-    wu: { // 心经
-      name: '心',
-      svg: (
-        <svg viewBox="0 0 200 200" className="w-full h-full">
-          <defs>
-            <linearGradient id="heartGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#fee2e2" />
-              <stop offset="100%" stopColor="#fca5a5" />
-            </linearGradient>
-          </defs>
-          <path d="M 100 60 C 80 40 50 50 50 80 C 50 110 100 150 100 150 C 100 150 150 110 150 80 C 150 50 120 40 100 60 Z" fill="url(#heartGradient)" opacity="0.9">
-            <animate attributeName="opacity" values="0.9;1;0.9" dur="1.5s" repeatCount="indefinite" />
-          </path>
-          <circle cx="100" cy="100" r="30" fill="none" stroke="#ef4444" strokeWidth="2" opacity="0.6">
-            <animate attributeName="r" values="30;35;30" dur="1.5s" repeatCount="indefinite" />
-            <animate attributeName="opacity" values="0.6;0.9;0.6" dur="1.5s" repeatCount="indefinite" />
-          </circle>
-        </svg>
-      )
-    },
-    wei: { // 小肠经
-      name: '小腸',
-      svg: (
-        <svg viewBox="0 0 200 200" className="w-full h-full">
-          <defs>
-            <linearGradient id="intestineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#fef3c7" />
-              <stop offset="100%" stopColor="#fbbf24" />
-            </linearGradient>
-          </defs>
-          <path d="M 50 100 Q 70 60 100 60 Q 130 60 150 100 Q 130 140 100 140 Q 70 140 50 100" fill="url(#intestineGradient)" opacity="0.8">
-            <animate attributeName="d" values="M 50 100 Q 70 60 100 60 Q 130 60 150 100 Q 130 140 100 140 Q 70 140 50 100;M 50 100 Q 70 70 100 70 Q 130 70 150 100 Q 130 130 100 130 Q 70 130 50 100;M 50 100 Q 70 60 100 60 Q 130 60 150 100 Q 130 140 100 140 Q 70 140 50 100" dur="2.5s" repeatCount="indefinite" />
-          </path>
-          <circle cx="100" cy="100" r="35" fill="none" stroke="#f59e0b" strokeWidth="2" opacity="0.5">
-            <animate attributeName="r" values="35;40;35" dur="2.5s" repeatCount="indefinite" />
-          </circle>
-        </svg>
-      )
-    },
-    shen: { // 膀胱经
-      name: '膀胱',
-      svg: (
-        <svg viewBox="0 0 200 200" className="w-full h-full">
-          <defs>
-            <linearGradient id="bladderGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#dbeafe" />
-              <stop offset="100%" stopColor="#93c5fd" />
-            </linearGradient>
-          </defs>
-          <ellipse cx="100" cy="100" rx="50" ry="70" fill="url(#bladderGradient)" opacity="0.8">
-            <animate attributeName="ry" values="70;75;70" dur="2s" repeatCount="indefinite" />
-          </ellipse>
-          <ellipse cx="100" cy="100" rx="35" ry="50" fill="none" stroke="#3b82f6" strokeWidth="2" opacity="0.6">
-            <animate attributeName="opacity" values="0.6;0.9;0.6" dur="2s" repeatCount="indefinite" />
-          </ellipse>
-        </svg>
-      )
-    },
-    you: { // 肾经
-      name: '腎',
-      svg: (
-        <svg viewBox="0 0 200 200" className="w-full h-full">
-          <defs>
-            <linearGradient id="kidneyGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#e0e7ff" />
-              <stop offset="100%" stopColor="#a5b4fc" />
-            </linearGradient>
-          </defs>
-          <ellipse cx="70" cy="100" rx="30" ry="45" fill="url(#kidneyGradient)" opacity="0.8">
-            <animate attributeName="ry" values="45;50;45" dur="2.5s" repeatCount="indefinite" />
-          </ellipse>
-          <ellipse cx="130" cy="100" rx="30" ry="45" fill="url(#kidneyGradient)" opacity="0.8">
-            <animate attributeName="ry" values="45;50;45" dur="2.5s" begin="0.3s" repeatCount="indefinite" />
-          </ellipse>
-          <circle cx="70" cy="100" r="20" fill="none" stroke="#6366f1" strokeWidth="2" opacity="0.5">
-            <animate attributeName="r" values="20;25;20" dur="2.5s" repeatCount="indefinite" />
-          </circle>
-          <circle cx="130" cy="100" r="20" fill="none" stroke="#6366f1" strokeWidth="2" opacity="0.5">
-            <animate attributeName="r" values="20;25;20" dur="2.5s" begin="0.3s" repeatCount="indefinite" />
-          </circle>
-        </svg>
-      )
-    },
-    xu: { // 心包经
-      name: '心包',
-      svg: (
-        <svg viewBox="0 0 200 200" className="w-full h-full">
-          <defs>
-            <linearGradient id="pericardiumGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#fce7f3" />
-              <stop offset="100%" stopColor="#f472b6" />
-            </linearGradient>
-          </defs>
-          <circle cx="100" cy="100" r="60" fill="url(#pericardiumGradient)" opacity="0.8">
-            <animate attributeName="r" values="60;65;60" dur="2s" repeatCount="indefinite" />
-          </circle>
-          <circle cx="100" cy="100" r="40" fill="none" stroke="#ec4899" strokeWidth="3" opacity="0.6">
-            <animate attributeName="opacity" values="0.6;0.9;0.6" dur="2s" repeatCount="indefinite" />
-          </circle>
-          <circle cx="100" cy="100" r="25" fill="#f472b6" opacity="0.4">
-            <animate attributeName="r" values="25;30;25" dur="1.5s" repeatCount="indefinite" />
-          </circle>
-        </svg>
-      )
-    },
-    hai: { // 三焦经
-      name: '三焦',
-      svg: (
-        <svg viewBox="0 0 200 200" className="w-full h-full">
-          <defs>
-            <linearGradient id="tripleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#f0fdf4" />
-              <stop offset="100%" stopColor="#86efac" />
-            </linearGradient>
-          </defs>
-          <ellipse cx="100" cy="60" rx="50" ry="30" fill="url(#tripleGradient)" opacity="0.8">
-            <animate attributeName="ry" values="30;35;30" dur="2s" repeatCount="indefinite" />
-          </ellipse>
-          <ellipse cx="100" cy="100" rx="60" ry="40" fill="url(#tripleGradient)" opacity="0.8">
-            <animate attributeName="rx" values="60;65;60" dur="2.2s" repeatCount="indefinite" />
-          </ellipse>
-          <ellipse cx="100" cy="140" rx="50" ry="30" fill="url(#tripleGradient)" opacity="0.8">
-            <animate attributeName="ry" values="30;35;30" dur="2.4s" repeatCount="indefinite" />
-          </ellipse>
-          <circle cx="100" cy="100" r="35" fill="none" stroke="#10b981" strokeWidth="2" opacity="0.5">
-            <animate attributeName="r" values="35;40;35" dur="2s" repeatCount="indefinite" />
-          </circle>
-        </svg>
-      )
-    }
+// 模擬圖標組件 (如果沒有安裝 lucide-react，可以用文字代替)
+const SunIcon = () => <span className="text-xl">☀</span>;
+const MoonIcon = () => <span className="text-xl">☾</span>;
+
+const MeridianClock = () => {
+  const navigate = useNavigate();
+  const [currentHour, setCurrentHour] = useState(new Date().getHours());
+
+  // 子午流注數據
+  const meridians = [
+    { id: 1, time: '23:00-01:00', shichen: '子時', organ: '膽', meridian: '足少陽膽經', advice: '膽汁推陳出新，應熟睡養膽。', element: '木' },
+    { id: 2, time: '01:00-03:00', shichen: '丑時', organ: '肝', meridian: '足厥陰肝經', advice: '肝血推陳出新，必須熟睡。', element: '木' },
+    { id: 3, time: '03:00-05:00', shichen: '寅時', organ: '肺', meridian: '手太陰肺經', advice: '肺氣輸布全身，宜深度睡眠。', element: '金' },
+    { id: 4, time: '05:00-07:00', shichen: '卯時', organ: '大腸', meridian: '手陽明大腸經', advice: '大腸蠕動，宜排便、喝溫水。', element: '金' },
+    { id: 5, time: '07:00-09:00', shichen: '辰時', organ: '胃', meridian: '足陽明胃經', advice: '胃酸分泌最旺，一定要吃早餐。', element: '土' },
+    { id: 6, time: '09:00-11:00', shichen: '巳時', organ: '脾', meridian: '足太陰脾經', advice: '脾運化水穀，宜適量飲水，忌冰。', element: '土' },
+    { id: 7, time: '11:00-13:00', shichen: '午時', organ: '心', meridian: '手少陰心經', advice: '心氣推動血液，宜小睡養心。', element: '火' },
+    { id: 8, time: '13:00-15:00', shichen: '未時', organ: '小腸', meridian: '手太陽小腸經', advice: '小腸分清泌濁，午餐應已吃完。', element: '火' },
+    { id: 9, time: '15:00-17:00', shichen: '申時', organ: '膀胱', meridian: '足太陽膀胱經', advice: '排毒最佳時機，多喝水、運動。', element: '水' },
+    { id: 10, time: '17:00-19:00', shichen: '酉時', organ: '腎', meridian: '足少陰腎經', advice: '腎藏精，不宜過勞，稍作休息。', element: '水' },
+    { id: 11, time: '19:00-21:00', shichen: '戌時', organ: '心包', meridian: '手厥陰心包經', advice: '保持心情愉快，散步放鬆。', element: '火' },
+    { id: 12, time: '21:00-23:00', shichen: '亥時', organ: '三焦', meridian: '手少陽三焦經', advice: '百脈休養生息，準備入睡。', element: '火' },
+  ];
+
+  // 判斷當前時辰
+  const getCurrentMeridianIndex = () => {
+    // 將23點處理為索引0 (子時)
+    if (currentHour >= 23 || currentHour < 1) return 0;
+    return Math.floor((currentHour - 1) / 2) + 1;
   };
 
-  const organ = animations[organKey] || animations.zi;
+  const activeIndex = getCurrentMeridianIndex();
 
-  return (
-    <div className="w-full h-full flex items-center justify-center">
-      <div className="relative w-48 h-48">
-        {organ.svg}
-        <div className="absolute bottom-0 left-0 right-0 text-center">
-          <span className="text-lg font-bold text-green-800 bg-white bg-opacity-80 px-3 py-1 rounded">
-            {organ.name}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const MeridianFlowPage = () => {
-  const { t } = useTranslation();
-  const [currentTime, setCurrentTime] = useState(new Date());
-  const [currentPeriod, setCurrentPeriod] = useState(getCurrentHealthClock());
-  const [selectedPeriod, setSelectedPeriod] = useState(null); // 选中的时辰
-  const [hoveredIndex, setHoveredIndex] = useState(null); // 鼠标悬停的索引
-
-  // 更新当前时间和时辰
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentTime(new Date());
-      setCurrentPeriod(getCurrentHealthClock());
-    }, 1000);
-
+      setCurrentHour(new Date().getHours());
+    }, 60000); // 每分鐘更新
     return () => clearInterval(timer);
   }, []);
 
-  // 获取当前时段的索引，用于高亮显示
-  const getCurrentPeriodIndex = () => {
-    return HEALTH_CLOCK_CONFIG.findIndex(p => p.key === currentPeriod.key);
-  };
-
-  const currentIndex = getCurrentPeriodIndex();
-  
-  // 处理点击时辰
-  const handlePeriodClick = (period) => {
-    setSelectedPeriod(period);
-  };
-
-  // 获取要显示的时辰（优先显示选中的，否则显示当前的）
-  const displayPeriod = selectedPeriod || currentPeriod;
-
   return (
-    <div className="container mx-auto max-w-6xl p-4" style={{ backgroundColor: '#fcfbf7', color: '#1e293b' }}>
-      {/* Header */}
-      <div className="mb-8">
-        <Link 
-          to="/" 
-          className="inline-flex items-center text-green-600 hover:text-green-800 mb-4 transition-colors"
+    <div className="min-h-screen bg-[#f4f1ea] text-[#2c2c2c] font-serif selection:bg-[#8b0000] selection:text-white">
+      {/* 返回按鈕 */}
+      <div className="absolute top-4 left-4 z-20">
+        <button
+          onClick={() => navigate('/')}
+          className="flex items-center gap-2 px-4 py-2 bg-white/90 hover:bg-white border border-[#8b0000]/30 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg hover:scale-105 text-[#8b0000] font-medium"
         >
-          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          返回首页
-        </Link>
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">子午流注</h1>
-            <p className="text-gray-600">十二時辰養生法 - 順應自然，調和陰陽</p>
-          </div>
-          <div className="text-right">
-            <div className="text-2xl font-bold text-green-800">
-              {currentTime.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
-            </div>
-            <div className="text-sm text-gray-600 mt-1">
-              {currentTime.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' })}
-            </div>
-          </div>
-        </div>
+          <span>返回首頁</span>
+        </button>
       </div>
 
-      {/* Current Period Highlight */}
-      <div className="bg-gradient-to-r from-green-50 to-green-100 border-2 border-green-300 rounded-lg p-6 mb-8 shadow-md">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center">
-            <svg className="w-6 h-6 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <h2 className="text-xl font-bold text-gray-800">
-              {selectedPeriod ? '選中時辰' : '當前時辰'}
-            </h2>
-          </div>
-          {selectedPeriod && (
-            <button
-              onClick={() => setSelectedPeriod(null)}
-              className="text-sm text-green-600 hover:text-green-800 flex items-center gap-1 px-3 py-1 rounded-lg hover:bg-green-100 transition-colors"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-              返回當前時辰
-            </button>
-          )}
+      {/* 頂部導航與主圖 */}
+      <header className="relative w-full h-64 md:h-80 overflow-hidden border-b-4 border-[#8b0000]">
+        <img
+          src={imgSrc}
+          alt="子午流注背景"
+          className="w-full h-full object-cover opacity-80"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#f4f1ea]/90 flex flex-col items-center justify-center">
+          <h1 className="text-5xl md:text-6xl font-bold tracking-widest text-[#8b0000] drop-shadow-sm" style={{ fontFamily: '"Noto Serif TC", "Songti TC", serif' }}>
+            子午流注
+          </h1>
+          <p className="mt-4 text-xl md:text-2xl text-[#4a4a4a] tracking-widest">
+            十二時辰養生指南
+          </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-          {/* Organ Animation */}
-          <div className="flex justify-center md:justify-start">
-            <div className="bg-white rounded-xl p-6 shadow-lg border-2 border-green-200">
-              <OrganAnimation organKey={displayPeriod.key} />
-            </div>
-          </div>
-          
-          {/* Text Content */}
-          <div className="text-center md:text-left">
-            <h3 className="text-5xl font-bold text-green-800 mb-3">{displayPeriod.name}</h3>
-            <p className="text-lg text-gray-700 mb-4 font-medium">{displayPeriod.range}</p>
-            <p className="text-base text-gray-800 bg-white bg-opacity-60 rounded-lg p-4">
-              {displayPeriod.advice}
-            </p>
-          </div>
-        </div>
-      </div>
+      </header>
 
-      {/* Meridian Flow Wheel */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">子午流注轉盤</h2>
-        <div className="flex justify-center">
-          <div className="relative w-full max-w-2xl">
-            <svg 
-              viewBox="0 0 500 500" 
-              className="w-full h-auto drop-shadow-2xl"
-              style={{ maxWidth: '600px', maxHeight: '600px' }}
-            >
-              <defs>
-                {/* Gradient for current period */}
-                <linearGradient id="currentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#86efac" />
-                  <stop offset="100%" stopColor="#4ade80" />
-                </linearGradient>
-                
-                {/* Gradient for normal period */}
-                <linearGradient id="normalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#dcfce7" />
-                  <stop offset="100%" stopColor="#bbf7d0" />
-                </linearGradient>
-                
-                {/* Shadow filter */}
-                <filter id="shadow">
-                  <feDropShadow dx="0" dy="2" stdDeviation="3" floodColor="#000000" floodOpacity="0.2"/>
-                </filter>
-              </defs>
-              
-              {/* Outer circle background with gradient */}
-              <circle 
-                cx="250" 
-                cy="250" 
-                r="240" 
-                fill="url(#normalGradient)" 
-                stroke="#10b981" 
-                strokeWidth="5"
-                filter="url(#shadow)"
-              />
-              
-              {/* Center circle with gradient */}
-              <circle 
-                cx="250" 
-                cy="250" 
-                r="85" 
-                fill="#ffffff" 
-                stroke="#10b981" 
-                strokeWidth="4"
-                filter="url(#shadow)"
-              />
-              
-              {/* Center text */}
-              <text 
-                x="250" 
-                y="240" 
-                textAnchor="middle" 
-                fontSize="24" 
-                fontWeight="bold" 
-                fill="#10b981"
-              >
-                子午流注
-              </text>
-              <text 
-                x="250" 
-                y="270" 
-                textAnchor="middle" 
-                fontSize="14" 
-                fill="#059669"
-              >
-                十二時辰
-              </text>
-              
-              {/* Draw 12 sectors for each period */}
-              {HEALTH_CLOCK_CONFIG.map((period, index) => {
-                const isCurrent = index === currentIndex;
-                const isSelected = selectedPeriod && selectedPeriod.key === period.key;
-                const isHovered = hoveredIndex === index;
-                const angle = (index * 30 - 90) * (Math.PI / 180);
-                const nextAngle = ((index + 1) * 30 - 90) * (Math.PI / 180);
-                const innerRadius = 110;
-                const outerRadius = 230;
-                const textRadius = (innerRadius + outerRadius) / 2;
-                
-                // Calculate sector path
-                const x1 = 250 + innerRadius * Math.cos(angle);
-                const y1 = 250 + innerRadius * Math.sin(angle);
-                const x2 = 250 + outerRadius * Math.cos(angle);
-                const y2 = 250 + outerRadius * Math.sin(angle);
-                const x3 = 250 + outerRadius * Math.cos(nextAngle);
-                const y3 = 250 + outerRadius * Math.sin(nextAngle);
-                const x4 = 250 + innerRadius * Math.cos(nextAngle);
-                const y4 = 250 + innerRadius * Math.sin(nextAngle);
-                
-                // Text position
-                const textAngle = (angle + nextAngle) / 2;
-                const textX = 250 + textRadius * Math.cos(textAngle);
-                const textY = 250 + textRadius * Math.sin(textAngle);
-                const rotation = (textAngle * 180 / Math.PI);
-                
-                // 处理点击事件
-                const handleClick = (e) => {
-                  e.stopPropagation();
-                  handlePeriodClick(period);
-                };
-                
-                return (
-                  <g 
-                    key={period.key}
-                    onClick={handleClick}
-                    onMouseEnter={() => setHoveredIndex(index)}
-                    onMouseLeave={() => setHoveredIndex(null)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    {/* Sector background */}
-                    <path
-                      d={`M ${x1} ${y1} L ${x2} ${y2} A ${outerRadius} ${outerRadius} 0 0 1 ${x3} ${y3} L ${x4} ${y4} A ${innerRadius} ${innerRadius} 0 0 0 ${x1} ${y1} Z`}
-                      fill={
-                        isSelected 
-                          ? "url(#currentGradient)" 
-                          : isCurrent 
-                            ? "url(#currentGradient)" 
-                            : "url(#normalGradient)"
-                      }
-                      stroke={
-                        isSelected || isCurrent
-                          ? "#10b981" 
-                          : isHovered
-                            ? "#34d399"
-                            : "#86efac"
-                      }
-                      strokeWidth={isSelected || isCurrent ? "4" : isHovered ? "3" : "2"}
-                      opacity={isSelected || isCurrent ? "1" : isHovered ? "0.9" : "0.8"}
-                      className="transition-all duration-300"
-                      style={(isSelected || isCurrent) ? { filter: 'url(#shadow)' } : {}}
-                    />
-                    
-                    {/* Period name - rotated text */}
-                    <g transform={`translate(${textX}, ${textY}) rotate(${rotation > 90 && rotation < 270 ? rotation + 180 : rotation})`}>
-                      <text
-                        x="0"
-                        y="0"
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                        fontSize="20"
-                        fontWeight="bold"
-                        fill={isSelected || isCurrent ? "#065f46" : "#1f2937"}
-                      >
-                        {period.name}
-                      </text>
-                      
-                      {/* Time range */}
-                      <text
-                        x="0"
-                        y="18"
-                        textAnchor="middle"
-                        fontSize="11"
-                        fill={isSelected || isCurrent ? "#047857" : "#6b7280"}
-                      >
-                        {period.range}
-                      </text>
-                    </g>
-                  </g>
-                );
-              })}
-              
-              {/* Hour markers */}
-              {Array.from({ length: 12 }).map((_, i) => {
-                const markerAngle = (i * 30 - 90) * (Math.PI / 180);
-                const x1 = 250 + 95 * Math.cos(markerAngle);
-                const y1 = 250 + 95 * Math.sin(markerAngle);
-                const x2 = 250 + 110 * Math.cos(markerAngle);
-                const y2 = 250 + 110 * Math.sin(markerAngle);
-                return (
-                  <line
-                    key={i}
-                    x1={x1}
-                    y1={y1}
-                    x2={x2}
-                    y2={y2}
-                    stroke="#10b981"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                  />
-                );
-              })}
-              
-              {/* Pointer to current period (only show if no selection) */}
-              {!selectedPeriod && (() => {
-                const pointerAngle = (currentIndex * 30 - 90) * (Math.PI / 180);
-                const pointerLength = 175;
-                const pointerX = 250 + pointerLength * Math.cos(pointerAngle);
-                const pointerY = 250 + pointerLength * Math.sin(pointerAngle);
-                
-                return (
-                  <g>
-                    {/* Pointer line with animation */}
-                    <line
-                      x1="250"
-                      y1="250"
-                      x2={pointerX}
-                      y2={pointerY}
-                      stroke="#10b981"
-                      strokeWidth="5"
-                      strokeLinecap="round"
-                      className="transition-all duration-500"
-                    />
-                    {/* Pointer circle */}
-                    <circle 
-                      cx={pointerX} 
-                      cy={pointerY} 
-                      r="15" 
-                      fill="#10b981" 
-                      stroke="#ffffff" 
-                      strokeWidth="3"
-                      className="animate-pulse"
-                    />
-                    {/* Inner dot */}
-                    <circle 
-                      cx={pointerX} 
-                      cy={pointerY} 
-                      r="6" 
-                      fill="#ffffff"
-                    />
-                  </g>
-                );
-              })()}
-            </svg>
-            
-            {/* Current period info card below wheel */}
-            <div className="mt-8 text-center">
-              <div className="inline-block bg-gradient-to-r from-green-100 to-green-50 border-2 border-green-500 rounded-xl px-8 py-4 shadow-lg transform transition-all hover:scale-105">
-                <p className="text-sm text-gray-600 mb-2 font-medium">
-                  {selectedPeriod ? '選中時辰' : '當前時辰'}
-                </p>
-                <p className="text-3xl font-bold text-green-800 mb-2">{displayPeriod.name}</p>
-                <p className="text-base text-gray-700 font-medium">{displayPeriod.range}</p>
-                <div className="mt-3 pt-3 border-t border-green-200">
-                  <p className="text-sm text-gray-600 italic">{displayPeriod.advice}</p>
-                </div>
-              </div>
-              <p className="text-xs text-gray-500 mt-4">
-                點擊轉盤上的任意時辰查看詳情
-              </p>
-            </div>
+      {/* 主要內容區 */}
+      <main className="max-w-6xl mx-auto px-4 py-12">
+
+        {/* 當前時辰提示 */}
+        <div className="mb-12 text-center">
+          <div className="inline-block p-8 border-2 border-[#8b0000] rounded-full bg-[#fffcf5] shadow-lg relative overflow-hidden">
+             <div className="absolute top-0 left-0 w-full h-2 bg-[#8b0000]"></div>
+             <h2 className="text-2xl text-[#555] mb-2">當前時辰</h2>
+             <div className="text-6xl font-bold text-[#8b0000] mb-2">{meridians[activeIndex].shichen}</div>
+             <div className="text-xl text-[#888]">{meridians[activeIndex].time}</div>
+             <div className="mt-4 text-lg font-medium">
+                運行經絡：<span className="text-[#8b0000]">{meridians[activeIndex].meridian}</span>
+             </div>
           </div>
         </div>
-      </div>
 
-      {/* All Periods Grid */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">十二時辰詳解</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {HEALTH_CLOCK_CONFIG.map((period, index) => {
-            const isCurrent = index === currentIndex;
+        {/* 十二時辰卡片網格 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {meridians.map((item, index) => {
+            const isActive = index === activeIndex;
             return (
               <div
-                key={period.key}
-                className={`rounded-lg p-5 shadow-sm transition-all ${
-                  isCurrent
-                    ? 'bg-green-100 border-2 border-green-500 transform scale-105'
-                    : 'bg-white border border-green-100 hover:shadow-md hover:border-green-300'
-                }`}
+                key={item.id}
+                className={`
+                  relative p-6 rounded-lg border transition-all duration-300
+                  ${isActive
+                    ? 'border-[#8b0000] bg-[#fffcf5] shadow-xl scale-105 z-10'
+                    : 'border-[#dcdcdc] bg-white hover:border-[#a89f91] hover:shadow-md'}
+                `}
               >
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center">
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${
-                      isCurrent ? 'bg-green-500 text-white' : 'bg-green-100 text-green-800'
-                    }`}>
-                      {index + 1}
-                    </div>
-                    <h3 className={`text-2xl font-bold ml-3 ${
-                      isCurrent ? 'text-green-800' : 'text-gray-800'
-                    }`}>
-                      {period.name}
-                    </h3>
-                  </div>
-                  {isCurrent && (
-                    <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
-                      當前
-                    </span>
-                  )}
+                {/* 裝飾角標 */}
+                <div className="absolute top-0 right-0 p-2 opacity-20">
+                  {index < 6 || index === 11 ? <SunIcon /> : <MoonIcon />}
                 </div>
-                <p className="text-sm text-gray-600 mb-3 font-medium">{period.range}</p>
-                <p className="text-sm text-gray-700 leading-relaxed">{period.advice}</p>
+
+                <div className="flex items-baseline justify-between mb-4 border-b border-dashed border-[#ccc] pb-2">
+                  <h3 className={`text-2xl font-bold ${isActive ? 'text-[#8b0000]' : 'text-[#333]'}`}>
+                    {item.shichen}
+                  </h3>
+                  <span className="text-sm font-mono text-[#666]">{item.time}</span>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-center">
+                    <span className="w-16 text-[#888] text-sm">對應臟腑</span>
+                    <span className="font-medium text-lg">{item.organ}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="w-16 text-[#888] text-sm">五行屬性</span>
+                    <span className="font-medium">{item.element}</span>
+                  </div>
+                  <div className="pt-2">
+                    <p className={`text-sm leading-relaxed ${isActive ? 'text-[#8b0000] font-medium' : 'text-[#555]'}`}>
+                      {item.advice}
+                    </p>
+                  </div>
+                </div>
+
+                {/* 激活狀態下的額外裝飾 */}
+                {isActive && (
+                  <div className="absolute -left-1 top-1/2 -translate-y-1/2 w-1 h-12 bg-[#8b0000] rounded-r"></div>
+                )}
               </div>
             );
           })}
         </div>
-      </div>
+      </main>
 
-      {/* Traditional Medicine Knowledge */}
-      <div className="bg-white border border-green-100 rounded-lg p-6 shadow-sm">
-        <h2 className="text-xl font-bold text-gray-800 mb-4">關於子午流注</h2>
-        <div className="prose max-w-none text-gray-700 space-y-3">
-          <p>
-            子午流注是中醫理論中的重要概念，它根據人體十二經脈的氣血運行規律，將一天分為十二個時辰，
-            每個時辰對應一條經脈的氣血最旺盛時段。
-          </p>
-          <p>
-            遵循子午流注的養生原則，在對應的時辰進行相應的活動，可以更好地調和陰陽、平衡氣血，
-            達到養生保健、預防疾病的目的。
-          </p>
-          <div className="mt-4 p-4 bg-green-50 rounded-lg">
-            <h3 className="font-bold text-green-800 mb-2">養生要點：</h3>
-            <ul className="list-disc list-inside space-y-1 text-sm">
-              <li>順應自然規律，按時作息</li>
-              <li>在對應時辰進行相應的養生活動</li>
-              <li>避免在氣血運行旺盛時段做對身體不利的事情</li>
-              <li>結合個人體質，靈活調整養生方法</li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      {/* 頁尾 */}
+      <footer className="mt-12 py-8 text-center text-[#888] border-t border-[#e5e5e5] bg-[#faf9f6]">
+        <p className="text-sm tracking-widest">順應天時 · 調和陰陽</p>
+      </footer>
     </div>
   );
 };
 
-export default MeridianFlowPage;
-
+export default MeridianClock;

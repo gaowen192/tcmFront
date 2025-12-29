@@ -174,7 +174,92 @@ const ArticleDetailPage = () => {
 
           {/* Article Content */}
           <div className="prose max-w-none mb-8">
-            <div className="text-gray-700 leading-relaxed whitespace-pre-wrap">{article.content}</div>
+            <style>{`
+              .article-content-html {
+                line-height: 1.8;
+              }
+              .article-content-html p {
+                margin-bottom: 1rem;
+              }
+              .article-content-html p:last-child {
+                margin-bottom: 0;
+              }
+              .article-content-html h1, .article-content-html h2, .article-content-html h3,
+              .article-content-html h4, .article-content-html h5, .article-content-html h6 {
+                margin-top: 1.5rem;
+                margin-bottom: 1rem;
+                font-weight: bold;
+              }
+              .article-content-html ul, .article-content-html ol {
+                margin: 1rem 0;
+                padding-left: 2rem;
+              }
+              .article-content-html li {
+                margin: 0.5rem 0;
+              }
+              .article-content-html img {
+                max-width: 100%;
+                height: auto;
+                margin: 1rem 0;
+              }
+              .article-content-html a {
+                color: #059669;
+                text-decoration: underline;
+              }
+              .article-content-html a:hover {
+                color: #047857;
+              }
+              .article-content-html code {
+                background-color: #f3f4f6;
+                padding: 0.2rem 0.4rem;
+                border-radius: 0.25rem;
+                font-family: monospace;
+              }
+              .article-content-html pre {
+                background-color: #f3f4f6;
+                padding: 1rem;
+                border-radius: 0.5rem;
+                overflow-x: auto;
+                margin: 1rem 0;
+              }
+              .article-content-html blockquote {
+                border-left: 4px solid #059669;
+                padding-left: 1rem;
+                margin: 1rem 0;
+                font-style: italic;
+                color: #6b7280;
+              }
+            `}</style>
+            {article.content ? (() => {
+              // Check if content already contains HTML tags
+              const hasHtml = /<[^>]+>/.test(article.content);
+              
+              if (hasHtml) {
+                // If content contains HTML, render it directly
+                // The browser will handle HTML structure and segmentation
+                return (
+                  <div 
+                    className="article-content-html text-gray-700"
+                    dangerouslySetInnerHTML={{ __html: article.content }}
+                  />
+                );
+              } else {
+                // If plain text, split by double newlines for paragraphs
+                const segments = article.content.split(/\n\s*\n/).filter(segment => segment.trim());
+                
+                return segments.map((segment, index) => (
+                  <p 
+                    key={index} 
+                    className="mb-4 last:mb-0 text-gray-700 leading-relaxed"
+                    dangerouslySetInnerHTML={{ 
+                      __html: segment.trim().replace(/\n/g, '<br>') 
+                    }}
+                  />
+                ));
+              }
+            })() : (
+              <p className="text-gray-500">暂无内容</p>
+            )}
           </div>
 
           {/* Stats */}
@@ -206,24 +291,6 @@ const ArticleDetailPage = () => {
               </div>
             </div>
           </div>
-
-          {/* SEO Info (for reference) */}
-          {article.seoTitle && (
-            <div className="mt-8 p-4 bg-gray-50 rounded-lg">
-              <h3 className="text-lg font-medium text-gray-800 mb-3">SEO信息</h3>
-              <div className="space-y-2 text-sm">
-                <div>
-                  <span className="font-medium text-gray-600">标题:</span> {article.seoTitle}
-                </div>
-                <div>
-                  <span className="font-medium text-gray-600">关键词:</span> {article.seoKeywords}
-                </div>
-                <div>
-                  <span className="font-medium text-gray-600">描述:</span> {article.seoDescription}
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* Comment Component */}
           <ArticleCommentComponent articleId={article.id} />

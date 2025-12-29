@@ -266,7 +266,92 @@ const PostDetailPage = () => {
         </div>
 
         <div className="prose max-w-none text-gray-700">
-          {post.content}
+          <style>{`
+            .post-content-html {
+              line-height: 1.8;
+            }
+            .post-content-html p {
+              margin-bottom: 1rem;
+            }
+            .post-content-html p:last-child {
+              margin-bottom: 0;
+            }
+            .post-content-html h1, .post-content-html h2, .post-content-html h3,
+            .post-content-html h4, .post-content-html h5, .post-content-html h6 {
+              margin-top: 1.5rem;
+              margin-bottom: 1rem;
+              font-weight: bold;
+            }
+            .post-content-html ul, .post-content-html ol {
+              margin: 1rem 0;
+              padding-left: 2rem;
+            }
+            .post-content-html li {
+              margin: 0.5rem 0;
+            }
+            .post-content-html img {
+              max-width: 100%;
+              height: auto;
+              margin: 1rem 0;
+            }
+            .post-content-html a {
+              color: #059669;
+              text-decoration: underline;
+            }
+            .post-content-html a:hover {
+              color: #047857;
+            }
+            .post-content-html code {
+              background-color: #f3f4f6;
+              padding: 0.2rem 0.4rem;
+              border-radius: 0.25rem;
+              font-family: monospace;
+            }
+            .post-content-html pre {
+              background-color: #f3f4f6;
+              padding: 1rem;
+              border-radius: 0.5rem;
+              overflow-x: auto;
+              margin: 1rem 0;
+            }
+            .post-content-html blockquote {
+              border-left: 4px solid #059669;
+              padding-left: 1rem;
+              margin: 1rem 0;
+              font-style: italic;
+              color: #6b7280;
+            }
+          `}</style>
+          {post.content ? (() => {
+            // Check if content already contains HTML tags
+            const hasHtml = /<[^>]+>/.test(post.content);
+            
+            if (hasHtml) {
+              // If content contains HTML, render it directly
+              // The browser will handle HTML structure and segmentation
+              return (
+                <div 
+                  className="post-content-html"
+                  dangerouslySetInnerHTML={{ __html: post.content }}
+                />
+              );
+            } else {
+              // If plain text, split by double newlines for paragraphs
+              const segments = post.content.split(/\n\s*\n/).filter(segment => segment.trim());
+              
+              return segments.map((segment, index) => (
+                <p 
+                  key={index} 
+                  className="mb-4 last:mb-0"
+                  dangerouslySetInnerHTML={{ 
+                    __html: segment.trim().replace(/\n/g, '<br>') 
+                  }}
+                />
+              ));
+            }
+          })() : (
+            <p className="text-gray-500">暂无内容</p>
+          )}
         </div>
 
         {/* Post tags */}
