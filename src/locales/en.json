@@ -4,7 +4,12 @@
     "nav": {
       "home": "Home",
       "about": "About",
-      "forum": "Forum"
+      "forum": "Forum",
+      "professionalArticles": "Professional Articles",
+      "personalCenter": "Personal Center",
+      "login": "Login",
+      "logout": "Logout",
+      "intelligentCM": "Intelligent CM"
     },
     "footer": "React Project with Router, Tailwind CSS and Proxy"
   },
@@ -79,6 +84,11 @@
       "professionalCoursesDesc": "Learn health knowledge",
       "professionalArticles": "Professional Articles",
       "professionalArticlesDesc": "Read TCM knowledge",
+      "tcmVideoList": "TCM Video List",
+      "search": "Search",
+      "clearSearch": "Clear Search",
+      "searchPosts": "Search Posts...",
+      "searchArticles": "Search Article Titles...",
       "participateDiscussions": "Join Discussions",
       "participateDiscussionsDesc": "Browse latest topics",
       "recommendedVideos": "Recommended Videos",

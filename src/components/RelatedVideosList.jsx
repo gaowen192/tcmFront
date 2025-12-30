@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 
 /**
  * Component for displaying related videos in a single column with independent scrolling
  */
 const RelatedVideosList = () => {
+  const { t } = useTranslation();
   // Video card component to prevent re-rendering of existing cards
   const VideoCard = React.memo(({ video }) => {
     return (
@@ -161,7 +163,7 @@ const RelatedVideosList = () => {
     <div className="sticky top-4 max-h-[calc(100vh-6rem)] overflow-y-auto">
       <div className="mb-10">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-gray-800">中医视频列表</h2>
+          <h2 className="text-xl font-bold text-gray-800">{t('home.tcm.tcmVideoList')}</h2>
           <span className="text-sm text-gray-500">
             共 {totalPages} 页，已加载 {videos.length} 个视频
           </span>

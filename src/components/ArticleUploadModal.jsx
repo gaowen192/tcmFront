@@ -6,7 +6,8 @@ const ArticleUploadModal = ({ isOpen, onClose, onSuccess, article }) => {
   const [content, setContent] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [tags, setTags] = useState('');
-  const [coverImage, setCoverImage] = useState('');
+  const [coverImage, setCoverImage] = useState(null);
+  const [coverImagePreview, setCoverImagePreview] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -17,14 +18,16 @@ const ArticleUploadModal = ({ isOpen, onClose, onSuccess, article }) => {
       setContent(article.content || '');
       setCategoryId(article.categoryId ? article.categoryId.toString() : '');
       setTags(article.tags || '');
-      setCoverImage(article.coverImage || '');
+      setCoverImage(null);
+      setCoverImagePreview(article.coverImage || '');
     } else if (isOpen) {
       // 重置表单
       setTitle('');
       setContent('');
       setCategoryId('');
       setTags('');
-      setCoverImage('');
+      setCoverImage(null);
+      setCoverImagePreview('');
     }
   }, [isOpen, article]);
 
@@ -62,39 +65,56 @@ const ArticleUploadModal = ({ isOpen, onClose, onSuccess, article }) => {
     }
 
     try {
-      // Create article data in JSON format
-      const articleData = {
-        id: article ? article.id : 0,
-        title: title,
-        content: content,
-        userId: parseInt(userId),
-        userName: localStorage.getItem('username') || 'unknown',
-        categoryId: parseInt(categoryId),
-        coverImage: coverImage,
-        tags: tags,
-        viewCount: article ? article.viewCount || 0 : 0,
-        likeCount: article ? article.likeCount || 0 : 0,
-        commentCount: article ? article.commentCount || 0 : 0,
-        collectCount: article ? article.collectCount || 0 : 0,
-        authorIp: '',
-        status: 1,
-        isHot: article ? article.isHot || false : false,
-        isRecommended: article ? article.isRecommended || false : false,
-        seoTitle: title,
-        seoKeywords: tags,
-        seoDescription: content.substring(0, 100) + '...',
-        createdAt: article ? article.createdAt : new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        publishedAt: article ? article.publishedAt : new Date().toISOString()
-      };
+      // Create FormData for multipart upload
+      const formData = new FormData();
+      
+      // Append individual fields as form parameters
+      if (article?.id) {
+        formData.append('id', article.id);
+      }
+      formData.append('title', title);
+      formData.append('content', content);
+      formData.append('userId', parseInt(userId));
+      formData.append('userName', localStorage.getItem('username') || 'unknown');
+      formData.append('categoryId', parseInt(categoryId));
+      formData.append('tags', tags);
+      
+      // Optional fields with default values
+      formData.append('viewCount', article ? article.viewCount || 0 : 0);
+      formData.append('likeCount', article ? article.likeCount || 0 : 0);
+      formData.append('commentCount', article ? article.commentCount || 0 : 0);
+      formData.append('collectCount', article ? article.collectCount || 0 : 0);
+      formData.append('authorIp', '');
+      formData.append('status', 1);
+      formData.append('isHot', article ? article.isHot || false : false);
+      formData.append('isRecommended', article ? article.isRecommended || false : false);
+      formData.append('seoTitle', title);
+      formData.append('seoKeywords', tags);
+      formData.append('seoDescription', content.substring(0, 100) + '...');
+      
+      // Date fields
+      if (article?.createdAt) {
+        formData.append('createdAt', article.createdAt);
+      }
+      formData.append('updatedAt', new Date().toISOString());
+      if (article?.publishedAt) {
+        formData.append('publishedAt', article.publishedAt);
+      } else {
+        formData.append('publishedAt', new Date().toISOString());
+      }
+      
+      // Append file if exists
+      if (coverImage) {
+        formData.append('file', coverImage);
+      }
 
       let result;
       // 根据是否有article参数决定是更新还是上传
       if (article) {
-        result = await api.updateArticle(article.id, articleData);
+        result = await api.updateArticle(article.id, formData);
         console.log('=============== Article update successful:', result);
       } else {
-        result = await api.uploadArticle(articleData);
+        result = await api.uploadArticle(formData);
         console.log('=============== Article upload successful:', result);
       }
       
@@ -103,7 +123,8 @@ const ArticleUploadModal = ({ isOpen, onClose, onSuccess, article }) => {
       setContent('');
       setCategoryId('');
       setTags('');
-      setCoverImage('');
+      setCoverImage(null);
+      setCoverImagePreview('');
       
       // Call success callback with the article data
       if (onSuccess) {
@@ -204,17 +225,39 @@ const ArticleUploadModal = ({ isOpen, onClose, onSuccess, article }) => {
 
           <div>
             <label htmlFor="coverImage" className="block text-sm font-medium text-gray-700 mb-1">
-              文章封面图片URL
+              文章封面图片
             </label>
-            <input
-              type="text"
-              id="coverImage"
-              value={coverImage}
-              onChange={(e) => setCoverImage(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="输入封面图片URL"
-              maxLength={255}
-            />
+            <div className="mt-1 flex items-center gap-4">
+              {coverImagePreview && (
+                <div className="w-24 h-24 bg-gray-100 rounded-md overflow-hidden">
+                  <img 
+                    src={coverImagePreview} 
+                    alt="Cover image preview" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              <input
+                type="file"
+                id="coverImage"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  setCoverImage(file);
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                      setCoverImagePreview(reader.result);
+                    };
+                    reader.readAsDataURL(file);
+                  } else {
+                    setCoverImagePreview('');
+                  }
+                }}
+                className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              />
+            </div>
+            <p className="mt-1 text-xs text-gray-500">上传图片用于文章封面</p>
           </div>
 
           <div className="flex justify-end space-x-3 pt-4">

@@ -4,7 +4,12 @@
     "nav": {
       "home": "首页总览",
       "about": "关于网址",
-      "forum": "社群論壇"
+      "forum": "社群論壇",
+      "professionalArticles": "专业文章",
+      "personalCenter": "个人中心",
+      "login": "登录",
+      "logout": "退出登录",
+      "intelligentCM": "智慧中医"
     },
     "footer": "使用React Router、Tailwind CSS和代理配置的React项目"
   },
@@ -78,6 +83,11 @@
       "professionalCoursesDesc": "学习会生知识",
       "professionalArticles": "专业文章",
       "professionalArticlesDesc": "阅读中医知识",
+      "tcmVideoList": "中医视频列表",
+      "search": "搜索",
+      "clearSearch": "清除搜索",
+      "searchPosts": "搜索帖子...",
+      "searchArticles": "搜索文章标题...",
       "participateDiscussions": "参与讨论",
       "participateDiscussionsDesc": "浏览最新话题",
       "recommendedVideos": "推荐影片",

@@ -252,7 +252,7 @@ function ForumPage({ isLoggedIn, onOpenLoginModal }) {
             <div className="relative w-full">
               <input
                 type="text"
-                placeholder="搜索帖子..."
+                placeholder={t('home.tcm.searchPosts')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent w-full"
@@ -266,7 +266,7 @@ function ForumPage({ isLoggedIn, onOpenLoginModal }) {
               type="submit"
               className="ml-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors whitespace-nowrap"
             >
-              搜索
+              {t('home.tcm.search')}
             </button>
           </form>
 

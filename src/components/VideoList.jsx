@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import api, { likeVideo } from '../services/api';
 
 // Video card component to prevent re-rendering of existing cards
@@ -91,6 +92,7 @@ const VideoCard = React.memo(({ video }) => {
 });
 
 const VideoList = React.memo(({ columns = 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' }) => {
+  const { t } = useTranslation();
   const [videos, setVideos] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -194,7 +196,7 @@ const VideoList = React.memo(({ columns = 'grid-cols-1 md:grid-cols-2 lg:grid-co
   return (
     <div className="mb-10">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold text-gray-800">中医视频列表</h2>
+        <h2 className="text-xl font-bold text-gray-800">{t('home.tcm.tcmVideoList')}</h2>
         <span className="text-sm text-gray-500">
           共 {totalPages} 页，已加载 {videos.length} 个视频
         </span>

@@ -856,20 +856,21 @@ export const addComment = async (articleId, content, parentId = 0) => {
 };
 
 // 上传文章
-export const uploadArticle = async (articleData) => {
+api.uploadArticle = async (formData) => {
   try {
-    console.log("=============== API Upload Article Request", articleData);
-    const response = await api.post(`/tcm/articles`, articleData, {
+    console.log('=============== API Upload Article Request:', formData);
+    const response = await api.post('/tcm/articles', formData, {
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'multipart/form-data'
       }
     });
-    console.log("=============== API Upload Article Response:", response.data);
+    console.log('=============== API Upload Article Response:', response.data);
     return response.data;
-  } catch (error) {
-    console.error("=============== API Upload Article Error:", error);
+  }
+  catch (error) {
+    console.error('=============== API Upload Article Error:', error);
     if (error.response) {
-      console.error("=============== API Upload Article Error Response:", error.response.data);
+      console.error('=============== API Upload Article Error Response:', error.response.data);
       throw error.response.data;
     } else {
       throw {
@@ -882,20 +883,21 @@ export const uploadArticle = async (articleData) => {
 };
 
 // 更新文章
-export const updateArticle = async (articleId, articleData) => {
+api.updateArticle = async (articleId, formData) => {
   try {
-    console.log("=============== API Update Article Request", { articleId, articleData });
-    const response = await api.put(`/tcm/articles/${articleId}`, articleData, {
+    console.log('=============== API Update Article Request:', { articleId, formData });
+    const response = await api.put(`/tcm/articles/${articleId}`, formData, {
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'multipart/form-data'
       }
     });
-    console.log("=============== API Update Article Response:", response.data);
+    console.log('=============== API Update Article Response:', response.data);
     return response.data;
-  } catch (error) {
-    console.error("=============== API Update Article Error:", error);
+  }
+  catch (error) {
+    console.error('=============== API Update Article Error:', error);
     if (error.response) {
-      console.error("=============== API Update Article Error Response:", error.response.data);
+      console.error('=============== API Update Article Error Response:', error.response.data);
       throw error.response.data;
     } else {
       throw {
@@ -964,12 +966,10 @@ api.getUserNotifications = async (page = 1, pageSize = 10) => {
   }
 };
 
-// 将uploadArticle、updateArticle和deleteVideo方法添加到api实例
+// 将deleteVideo方法添加到api实例
 try {
-  api.uploadArticle = uploadArticle;
-  api.updateArticle = updateArticle;
   api.deleteVideo = deleteVideo;
-  console.log("=============== Upload, update article and delete video methods added to api instance");
+  console.log("=============== Delete video method added to api instance");
 } catch (error) {
   console.error("=============== Error adding methods to api instance:", error);
 }

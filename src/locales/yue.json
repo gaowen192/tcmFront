@@ -2,8 +2,14 @@
   "app": {
     "title": "React应用",
     "nav": {
-      "home": "首页",
-      "about": "關於"
+      "home": "首頁",
+      "about": "關於",
+      "forum": "社群論壇",
+      "professionalArticles": "專業文章",
+      "personalCenter": "個人中心",
+      "login": "登錄",
+      "logout": "退出登錄",
+      "intelligentCM": "智慧中醫"
     },
     "footer": "使用React Router、Tailwind CSS同代理配置嘅React項目"
   },
@@ -77,6 +83,11 @@
       "professionalCoursesDesc": "學習會生知識",
       "professionalArticles": "專業文章",
       "professionalArticlesDesc": "閱讀中醫知識",
+      "tcmVideoList": "中醫視頻列表",
+      "search": "搜索",
+      "clearSearch": "清除搜索",
+      "searchPosts": "搜索帖子...",
+      "searchArticles": "搜索文章標題...",
       "participateDiscussions": "參與討論",
       "participateDiscussionsDesc": "瀏覽最新話題",
       "recommendedVideos": "推薦影片",

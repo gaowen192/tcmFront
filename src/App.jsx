@@ -119,9 +119,9 @@ const handleLogout = () => {
   
   const navItems = [
     { id: 'home', label: t('app.nav.home'), icon: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>, path: '/' },
-    { id: 'professionalArticles', label: '专业文章', icon: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>, path: '/professional-articles' },
+    { id: 'professionalArticles', label: t('app.nav.professionalArticles'), icon: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>, path: '/professional-articles' },
     { id: 'forum', label: t('app.nav.forum'), icon: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>, path: '/forum' },
-    { id: 'profile', label: isLoggedIn ? '个人中心' : '登录', icon: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>, path: isLoggedIn ? '/profile' : '#', action: isLoggedIn ? null : () => setIsLoginModalOpen(true) }
+    { id: 'profile', label: isLoggedIn ? t('app.nav.personalCenter') : t('app.nav.login'), icon: () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>, path: isLoggedIn ? '/profile' : '#', action: isLoggedIn ? null : () => setIsLoginModalOpen(true) }
   ];
   
   return (
@@ -136,7 +136,7 @@ const handleLogout = () => {
                     <rect width="40" height="40" rx="8" fill="#10B981"/>
                     <text x="20" y="25" fontFamily="Arial, sans-serif" fontSize="22" fontWeight="bold" fill="white" textAnchor="middle">中</text>
                   </svg>
-                  智慧中医
+                  {t('app.nav.intelligentCM')}
                   <span className="text-sm font-normal ml-1">Intelligent CM</span>
                 </Link>
               </div>
@@ -157,7 +157,7 @@ const handleLogout = () => {
                     onClick={() => setActiveTab('professionalArticles')}
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
-                    专业文章
+                    {t('app.nav.professionalArticles')}
                   </Link>
                   <Link 
                     to="/forum" 
@@ -193,13 +193,13 @@ const handleLogout = () => {
                             onClick={() => setShowUserMenu(false)}
                             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-green-100 hover:text-green-800 transition-colors"
                           >
-                            个人中心
+                            {t('app.nav.personalCenter')}
                           </Link>
                           <button 
                             onClick={handleLogout}
                             className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-green-100 hover:text-green-800 transition-colors"
                           >
-                            退出登录
+                            {t('app.nav.logout')}
                           </button>
                         </div>
                       )}
@@ -210,7 +210,7 @@ const handleLogout = () => {
                       className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-green-800 hover:bg-green-100 transition-all"
                     >
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                      登录
+                      {t('app.nav.login')}
                     </button>
                   )}
                 </div>
@@ -269,7 +269,7 @@ const handleLogout = () => {
                     className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all text-sm font-medium text-gray-700 hover:bg-red-50 hover:text-red-600"
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                    退出登录
+                    {t('app.nav.logout')}
                   </button>
                 )}
               </nav>

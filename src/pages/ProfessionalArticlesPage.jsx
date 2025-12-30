@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { fetchArticles, likeArticle } from '../services/api';
 
 const ProfessionalArticlesPage = () => {
+  const { t } = useTranslation();
   const [articles, setArticles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -144,7 +146,7 @@ const ProfessionalArticlesPage = () => {
 
   return (
     <div className="container mx-auto max-w-5xl p-4">
-      <h1 className="text-3xl font-bold mb-4 text-green-800">专业文章</h1>
+      <h1 className="text-3xl font-bold mb-4 text-green-800">{t('home.tcm.professionalArticles')}</h1>
       
       {/* Search Bar */}
       <div className="mb-6">
@@ -152,7 +154,7 @@ const ProfessionalArticlesPage = () => {
           <div className="flex-1 relative">
             <input
               type="text"
-              placeholder="搜索文章标题..."
+              placeholder={t('home.tcm.searchArticles')}
               value={searchTitle}
               onChange={handleSearchInputChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
@@ -172,7 +174,7 @@ const ProfessionalArticlesPage = () => {
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-            搜索
+            {t('home.tcm.search')}
           </button>
         </form>
       </div>
@@ -248,7 +250,7 @@ const ProfessionalArticlesPage = () => {
               }} 
               className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
             >
-              清除搜索
+              {t('home.tcm.clearSearch')}
             </button>
           )}
         </div>
