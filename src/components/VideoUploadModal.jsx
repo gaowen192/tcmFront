@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 
 const VideoUploadModal = ({ isOpen, onClose, onSuccess }) => {
+  const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [categoryId, setCategoryId] = useState('');
@@ -20,26 +22,26 @@ const VideoUploadModal = ({ isOpen, onClose, onSuccess }) => {
 
     // Validate form
     if (!title.trim()) {
-      setError('视频标题不能为空');
+      setError(t('profile.videoUpload.errorTitleEmpty'));
       setLoading(false);
       return;
     }
 
     if (!categoryId.trim()) {
-      setError('板块ID不能为空');
+      setError(t('profile.videoUpload.errorCategoryEmpty'));
       setLoading(false);
       return;
     }
 
     if (!videoFile) {
-      setError('视频文件不能为空');
+      setError(t('profile.videoUpload.errorFileEmpty'));
       setLoading(false);
       return;
     }
 
     const userId = api.getCurrentUserId();
     if (!userId) {
-      setError('用户未登录');
+      setError(t('profile.videoUpload.errorNotLoggedIn'));
       setLoading(false);
       return;
     }
@@ -78,7 +80,7 @@ const VideoUploadModal = ({ isOpen, onClose, onSuccess }) => {
       onClose();
     } catch (err) {
       console.error('=============== Video upload failed:', err);
-      setError(err.message || '视频上传失败，请重试');
+      setError(err.message || t('profile.videoUpload.errorUploadFailed'));
     } finally {
       setLoading(false);
     }
@@ -102,7 +104,7 @@ const VideoUploadModal = ({ isOpen, onClose, onSuccess }) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 overflow-y-auto">
       <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl my-8 mx-4">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">上传视频</h2>
+          <h2 className="text-xl font-bold">{t('profile.videoUpload.title')}</h2>
           <button 
             onClick={onClose} 
             className="text-gray-500 hover:text-gray-700 transition-colors"
@@ -122,7 +124,7 @@ const VideoUploadModal = ({ isOpen, onClose, onSuccess }) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-              视频标题 <span className="text-red-500">*</span>
+              {t('profile.videoUpload.videoTitle')} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -130,21 +132,21 @@ const VideoUploadModal = ({ isOpen, onClose, onSuccess }) => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="输入视频标题"
+              placeholder={t('profile.videoUpload.videoTitlePlaceholder')}
               maxLength={100}
             />
           </div>
 
           <div>
             <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-              视频描述
+              {t('profile.videoUpload.videoDescription')}
             </label>
             <textarea
               id="description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="输入视频描述"
+              placeholder={t('profile.videoUpload.videoDescriptionPlaceholder')}
               rows={3}
               maxLength={500}
             />
@@ -152,7 +154,7 @@ const VideoUploadModal = ({ isOpen, onClose, onSuccess }) => {
 
           <div>
             <label htmlFor="categoryId" className="block text-sm font-medium text-gray-700 mb-1">
-              板块ID <span className="text-red-500">*</span>
+              {t('profile.videoUpload.categoryId')} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -160,14 +162,14 @@ const VideoUploadModal = ({ isOpen, onClose, onSuccess }) => {
               value={categoryId}
               onChange={(e) => setCategoryId(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="输入板块ID"
+              placeholder={t('profile.videoUpload.categoryIdPlaceholder')}
               maxLength={10}
             />
           </div>
 
           <div>
             <label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-1">
-              视频标签
+              {t('profile.videoUpload.tags')}
             </label>
             <input
               type="text"
@@ -175,14 +177,14 @@ const VideoUploadModal = ({ isOpen, onClose, onSuccess }) => {
               value={tags}
               onChange={(e) => setTags(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="输入视频标签，用逗号分隔"
+              placeholder={t('profile.videoUpload.tagsPlaceholder')}
               maxLength={100}
             />
           </div>
 
           <div>
             <label htmlFor="videoFile" className="block text-sm font-medium text-gray-700 mb-1">
-              视频文件 <span className="text-red-500">*</span>
+              {t('profile.videoUpload.videoFile')} <span className="text-red-500">*</span>
             </label>
             <input
               type="file"
@@ -192,13 +194,13 @@ const VideoUploadModal = ({ isOpen, onClose, onSuccess }) => {
               className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
             />
             {videoFile && (
-              <p className="mt-1 text-sm text-gray-500">已选择文件: {videoFile.name}</p>
+              <p className="mt-1 text-sm text-gray-500">{t('profile.videoUpload.fileSelected', { fileName: videoFile.name })}</p>
             )}
           </div>
 
           <div>
             <label htmlFor="thumbnail" className="block text-sm font-medium text-gray-700 mb-1">
-              视频封面图片
+              {t('profile.videoUpload.thumbnail')}
             </label>
             <input
               type="file"
@@ -208,7 +210,7 @@ const VideoUploadModal = ({ isOpen, onClose, onSuccess }) => {
               className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
             />
             {thumbnail && (
-              <p className="mt-1 text-sm text-gray-500">已选择封面: {thumbnail.name}</p>
+              <p className="mt-1 text-sm text-gray-500">{t('profile.videoUpload.thumbnailSelected', { fileName: thumbnail.name })}</p>
             )}
           </div>
 
@@ -219,14 +221,14 @@ const VideoUploadModal = ({ isOpen, onClose, onSuccess }) => {
               className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
               disabled={loading}
             >
-              取消
+              {t('profile.videoUpload.cancel')}
             </button>
             <button
               type="submit"
               className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400"
               disabled={loading}
             >
-              {loading ? '上传中...' : '上传视频'}
+              {loading ? t('profile.videoUpload.uploading') : t('profile.videoUpload.upload')}
             </button>
           </div>
         </form>

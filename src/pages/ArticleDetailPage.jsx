@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import ReactMarkdown from 'react-markdown';
 import { fetchArticleDetail, likeArticle } from '../services/api';
 import ArticleCommentComponent from '../components/ArticleCommentComponent';
 
@@ -175,59 +176,106 @@ const ArticleDetailPage = () => {
           {/* Article Content */}
           <div className="prose max-w-none mb-8">
             <style>{`
-              .article-content-html {
+              .article-content-html, .article-content-markdown {
                 line-height: 1.8;
               }
-              .article-content-html p {
+              .article-content-html p, .article-content-markdown p {
                 margin-bottom: 1rem;
               }
-              .article-content-html p:last-child {
+              .article-content-html p:last-child, .article-content-markdown p:last-child {
                 margin-bottom: 0;
               }
               .article-content-html h1, .article-content-html h2, .article-content-html h3,
-              .article-content-html h4, .article-content-html h5, .article-content-html h6 {
+              .article-content-html h4, .article-content-html h5, .article-content-html h6,
+              .article-content-markdown h1, .article-content-markdown h2, .article-content-markdown h3,
+              .article-content-markdown h4, .article-content-markdown h5, .article-content-markdown h6 {
                 margin-top: 1.5rem;
                 margin-bottom: 1rem;
                 font-weight: bold;
               }
-              .article-content-html ul, .article-content-html ol {
+              .article-content-html h1, .article-content-markdown h1 {
+                font-size: 2rem;
+                border-bottom: 2px solid #e5e7eb;
+                padding-bottom: 0.5rem;
+              }
+              .article-content-html h2, .article-content-markdown h2 {
+                font-size: 1.5rem;
+                border-bottom: 1px solid #e5e7eb;
+                padding-bottom: 0.3rem;
+              }
+              .article-content-html h3, .article-content-markdown h3 {
+                font-size: 1.25rem;
+              }
+              .article-content-html ul, .article-content-html ol,
+              .article-content-markdown ul, .article-content-markdown ol {
                 margin: 1rem 0;
                 padding-left: 2rem;
               }
-              .article-content-html li {
+              .article-content-html li, .article-content-markdown li {
                 margin: 0.5rem 0;
               }
-              .article-content-html img {
+              .article-content-html img, .article-content-markdown img {
                 max-width: 100%;
                 height: auto;
                 margin: 1rem 0;
+                border-radius: 0.5rem;
               }
-              .article-content-html a {
+              .article-content-html a, .article-content-markdown a {
                 color: #059669;
                 text-decoration: underline;
               }
-              .article-content-html a:hover {
+              .article-content-html a:hover, .article-content-markdown a:hover {
                 color: #047857;
               }
-              .article-content-html code {
+              .article-content-html code, .article-content-markdown code {
                 background-color: #f3f4f6;
                 padding: 0.2rem 0.4rem;
                 border-radius: 0.25rem;
-                font-family: monospace;
+                font-family: 'Courier New', monospace;
+                font-size: 0.9em;
               }
-              .article-content-html pre {
-                background-color: #f3f4f6;
+              .article-content-html pre, .article-content-markdown pre {
+                background-color: #1f2937;
+                color: #f9fafb;
                 padding: 1rem;
                 border-radius: 0.5rem;
                 overflow-x: auto;
                 margin: 1rem 0;
               }
-              .article-content-html blockquote {
+              .article-content-html pre code, .article-content-markdown pre code {
+                background-color: transparent;
+                color: inherit;
+                padding: 0;
+              }
+              .article-content-html blockquote, .article-content-markdown blockquote {
                 border-left: 4px solid #059669;
                 padding-left: 1rem;
                 margin: 1rem 0;
                 font-style: italic;
                 color: #6b7280;
+                background-color: #f9fafb;
+                padding: 1rem;
+                border-radius: 0.25rem;
+              }
+              .article-content-markdown table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 1rem 0;
+              }
+              .article-content-markdown table th,
+              .article-content-markdown table td {
+                border: 1px solid #e5e7eb;
+                padding: 0.5rem;
+                text-align: left;
+              }
+              .article-content-markdown table th {
+                background-color: #f3f4f6;
+                font-weight: bold;
+              }
+              .article-content-markdown hr {
+                border: none;
+                border-top: 2px solid #e5e7eb;
+                margin: 2rem 0;
               }
             `}</style>
             {article.content ? (() => {
@@ -244,18 +292,13 @@ const ArticleDetailPage = () => {
                   />
                 );
               } else {
-                // If plain text, split by double newlines for paragraphs
-                const segments = article.content.split(/\n\s*\n/).filter(segment => segment.trim());
-                
-                return segments.map((segment, index) => (
-                  <p 
-                    key={index} 
-                    className="mb-4 last:mb-0 text-gray-700 leading-relaxed"
-                    dangerouslySetInnerHTML={{ 
-                      __html: segment.trim().replace(/\n/g, '<br>') 
-                    }}
-                  />
-                ));
+                // For non-HTML content, render as Markdown
+                // Markdown can handle both markdown syntax and plain text gracefully
+                return (
+                  <div className="article-content-markdown text-gray-700">
+                    <ReactMarkdown>{article.content}</ReactMarkdown>
+                  </div>
+                );
               }
             })() : (
               <p className="text-gray-500">暂无内容</p>

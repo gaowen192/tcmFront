@@ -53,7 +53,7 @@ const ProfilePage = () => {
       
       if (!userId) {
         console.error("===============No userId found in localStorage");
-        setError('未找到用户ID，请重新登录');
+        setError(t('profile.missingUserId'));
         navigate('/login');
         return;
       }
@@ -93,7 +93,7 @@ const ProfilePage = () => {
         });
       } else {
         console.error("===============Failed to get user info:", response.message);
-        setError(response.message || '获取用户信息失败');
+        setError(response.message || t('profile.loadUserFailed'));
         // 如果未登录或token过期，重定向到登录页
         if (response.code === 401) {
           navigate('/login');
@@ -101,7 +101,7 @@ const ProfilePage = () => {
       }
     } catch (error) {
       console.error("===============Error fetching user info:", error);
-      setError('网络错误，无法获取用户信息');
+      setError(t('profile.loadUserNetworkError'));
     } finally {
       setIsLoading(false);
     }
@@ -137,11 +137,11 @@ const ProfilePage = () => {
   const getStatusText = (status) => {
     switch (status) {
       case 1:
-        return '正常';
+        return t('profile.normal');
       case 2:
-        return '禁用';
+        return t('profile.disabled');
       default:
-        return '未知';
+        return t('profile.unknown');
     }
   };
 
@@ -149,13 +149,13 @@ const ProfilePage = () => {
   const getRoleText = (role) => {
     switch (role) {
       case 'admin':
-        return '管理员';
+        return t('profile.admin');
       case 'doctor':
-        return '医生';
+        return t('profile.doctor');
       case 'user':
-        return '用户';
+        return t('profile.user');
       default:
-        return '未知角色';
+        return t('profile.unknownRole');
     }
   };
 
@@ -226,7 +226,7 @@ const ProfilePage = () => {
       console.log("===============Update response:", response);
       
       if (response && response.code === 200) {
-        setSuccess('个人信息更新成功');
+        setSuccess(t('profile.updateSuccess'));
         setIsEditing(false);
         // 更新用户信息
         setUserInfo(prev => ({
@@ -242,11 +242,11 @@ const ProfilePage = () => {
           }));
         }
       } else {
-        setError(response.message || '更新失败');
+        setError(response.message || t('profile.updateFailed'));
       }
     } catch (error) {
       console.error("===============Error updating user info:", error);
-      setError('网络错误，更新失败');
+      setError(t('profile.networkError'));
     }
   };
 
@@ -295,15 +295,15 @@ const ProfilePage = () => {
             [editingField]: editingValue
           }));
         }
-        setSuccess('信息更新成功');
+        setSuccess(t('profile.updateFieldSuccess'));
         setEditingField(null);
         setEditingValue('');
       } else {
-        setError(response.message || '更新失败');
+        setError(response.message || t('profile.updateFailed'));
       }
     } catch (error) {
       console.error("===============Error updating single field:", error);
-      setError('网络错误，更新失败');
+      setError(t('profile.networkError'));
     } finally {
       setIsUpdating(false);
     }
@@ -419,34 +419,36 @@ const ProfilePage = () => {
               </div>
             </div>
             
-            {/* 右侧：上传按钮区域 */}
-            <div className="flex flex-wrap justify-center md:justify-end gap-2 w-full md:w-auto">
-              <button 
-                className="flex items-center justify-center px-3 py-1.5 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full text-sm font-medium hover:from-blue-600 hover:to-indigo-600 transition-all duration-300 shadow-sm hover:shadow-md"
-                onClick={() => {
-                  console.log("===============Upload Video button clicked");
-                  setIsVideoUploadModalOpen(true);
-                }}
-              >
-                <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                上传视频
-              </button>
-              <button 
-                className="flex items-center justify-center px-3 py-1.5 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-full text-sm font-medium hover:from-green-600 hover:to-teal-600 transition-all duration-300 shadow-sm hover:shadow-md"
-                onClick={() => {
-                  console.log("===============Upload Article button clicked");
-                  setIsArticleUploadModalOpen(true);
-                }}
-              >
-                <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                上传文章
-              </button>
-            </div>
+            {/* 右侧：上传按钮区域 - 仅专家用户显示 */}
+            {userInfo.userType === 1 && (
+              <div className="flex flex-wrap justify-center md:justify-end gap-2 w-full md:w-auto">
+                <button 
+                  className="flex items-center justify-center px-3 py-1.5 bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full text-sm font-medium hover:from-blue-600 hover:to-indigo-600 transition-all duration-300 shadow-sm hover:shadow-md"
+                  onClick={() => {
+                    console.log("===============Upload Video button clicked");
+                    setIsVideoUploadModalOpen(true);
+                  }}
+                >
+                  <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  {t('profile.uploadVideo')}
+                </button>
+                <button 
+                  className="flex items-center justify-center px-3 py-1.5 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-full text-sm font-medium hover:from-green-600 hover:to-teal-600 transition-all duration-300 shadow-sm hover:shadow-md"
+                  onClick={() => {
+                    console.log("===============Upload Article button clicked");
+                    setIsArticleUploadModalOpen(true);
+                  }}
+                >
+                  <svg className="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  {t('profile.uploadArticle')}
+                </button>
+              </div>
+            )}
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-sans">
@@ -456,7 +458,7 @@ const ProfilePage = () => {
                 <svg className="w-4 h-4 mr-1.5 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
-                <span className="text-sm font-semibold text-gray-600 tracking-wider">真实姓名</span>
+                <span className="text-sm font-semibold text-gray-600 tracking-wider">{t('profile.realName')}</span>
               </div>
               {editingField === 'realName' ? (
                 <div className="flex items-center space-x-2 flex-1">
@@ -464,8 +466,14 @@ const ProfilePage = () => {
                     type="text"
                     value={editingValue}
                     onChange={(e) => setEditingValue(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !isUpdating) {
+                        e.preventDefault();
+                        handleSaveEditField();
+                      }
+                    }}
                     className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    placeholder="请输入真实姓名"
+                    placeholder={t('profile.realNamePlaceholder')}
                     autoFocus
                   />
                   <button
@@ -487,7 +495,7 @@ const ProfilePage = () => {
                   className="text-sm text-gray-800 font-medium tracking-wide cursor-pointer hover:text-teal-500"
                   onClick={() => handleStartEditField('realName', userInfo.realName)}
                 >
-                  {userInfo.realName || '未设置'}
+                  {userInfo.realName || t('profile.notSet')}
                 </span>
               )}
             </div>
@@ -498,7 +506,7 @@ const ProfilePage = () => {
                 <svg className="w-4 h-4 mr-1.5 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                <span className="text-sm font-semibold text-gray-600 tracking-wider">邮箱</span>
+                <span className="text-sm font-semibold text-gray-600 tracking-wider">{t('profile.email')}</span>
               </div>
               {editingField === 'email' ? (
                 <div className="flex items-center space-x-2 flex-1">
@@ -506,8 +514,14 @@ const ProfilePage = () => {
                     type="email"
                     value={editingValue}
                     onChange={(e) => setEditingValue(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !isUpdating) {
+                        e.preventDefault();
+                        handleSaveEditField();
+                      }
+                    }}
                     className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    placeholder="请输入邮箱"
+                    placeholder={t('profile.emailPlaceholder')}
                     autoFocus
                   />
                   <button
@@ -529,7 +543,7 @@ const ProfilePage = () => {
                   className="text-sm text-gray-800 font-medium tracking-wide truncate cursor-pointer hover:text-teal-500"
                   onClick={() => handleStartEditField('email', userInfo.email)}
                 >
-                  {userInfo.email || '未设置'}
+                  {userInfo.email || t('profile.notSet')}
                 </span>
               )}
             </div>
@@ -540,7 +554,7 @@ const ProfilePage = () => {
                 <svg className="w-4 h-4 mr-1.5 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
-                <span className="text-sm font-semibold text-gray-600 tracking-wider">电话</span>
+                <span className="text-sm font-semibold text-gray-600 tracking-wider">{t('profile.phone')}</span>
               </div>
               {editingField === 'phone' ? (
                 <div className="flex items-center space-x-2 flex-1">
@@ -548,8 +562,14 @@ const ProfilePage = () => {
                     type="tel"
                     value={editingValue}
                     onChange={(e) => setEditingValue(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !isUpdating) {
+                        e.preventDefault();
+                        handleSaveEditField();
+                      }
+                    }}
                     className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    placeholder="请输入电话"
+                    placeholder={t('profile.phonePlaceholder')}
                     autoFocus
                   />
                   <button
@@ -571,7 +591,7 @@ const ProfilePage = () => {
                   className="text-sm text-gray-800 font-medium tracking-wide cursor-pointer hover:text-teal-500"
                   onClick={() => handleStartEditField('phone', userInfo.phone)}
                 >
-                  {userInfo.phone || '未设置'}
+                  {userInfo.phone || t('profile.notSet')}
                 </span>
               )}
             </div>
@@ -582,19 +602,25 @@ const ProfilePage = () => {
                 <svg className="w-4 h-4 mr-1.5 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
-                <span className="text-sm font-semibold text-gray-600 tracking-wider">性别</span>
+                <span className="text-sm font-semibold text-gray-600 tracking-wider">{t('profile.gender')}</span>
               </div>
               {editingField === 'gender' ? (
                 <div className="flex items-center space-x-2 flex-1">
                   <select
                     value={editingValue}
                     onChange={(e) => setEditingValue(parseInt(e.target.value))}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !isUpdating) {
+                        e.preventDefault();
+                        handleSaveEditField();
+                      }
+                    }}
                     className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
                     autoFocus
                   >
-                    <option value="0">未设置</option>
-                    <option value="1">男</option>
-                    <option value="2">女</option>
+                    <option value="0">{t('profile.genderUnset')}</option>
+                    <option value="1">{t('profile.genderMale')}</option>
+                    <option value="2">{t('profile.genderFemale')}</option>
                   </select>
                   <button
                     onClick={handleSaveEditField}
@@ -615,7 +641,7 @@ const ProfilePage = () => {
                   className="text-sm text-gray-800 font-medium tracking-wide cursor-pointer hover:text-teal-500"
                   onClick={() => handleStartEditField('gender', userInfo.gender)}
                 >
-                  {userInfo.gender === 1 ? '男' : userInfo.gender === 2 ? '女' : '未设置'}
+                  {userInfo.gender === 1 ? t('profile.genderMale') : userInfo.gender === 2 ? t('profile.genderFemale') : t('profile.notSet')}
                 </span>
               )}
             </div>
@@ -626,7 +652,7 @@ const ProfilePage = () => {
                 <svg className="w-4 h-4 mr-1.5 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                <span className="text-sm font-semibold text-gray-600 tracking-wider">生日</span>
+                <span className="text-sm font-semibold text-gray-600 tracking-wider">{t('profile.birthday')}</span>
               </div>
               {editingField === 'birthday' ? (
                 <div className="flex items-center space-x-2 flex-1">
@@ -634,6 +660,12 @@ const ProfilePage = () => {
                     type="date"
                     value={editingValue ? new Date(editingValue).toISOString().split('T')[0] : ''}
                     onChange={(e) => setEditingValue(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !isUpdating) {
+                        e.preventDefault();
+                        handleSaveEditField();
+                      }
+                    }}
                     className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
                     autoFocus
                   />
@@ -656,7 +688,7 @@ const ProfilePage = () => {
                   className="text-sm text-gray-800 font-medium tracking-wide cursor-pointer hover:text-teal-500"
                   onClick={() => handleStartEditField('birthday', userInfo.birthday)}
                 >
-                  {formatDate(userInfo.birthday) || '未设置'}
+                  {formatDate(userInfo.birthday) || t('profile.notSet')}
                 </span>
               )}
             </div>
@@ -667,10 +699,10 @@ const ProfilePage = () => {
                 <svg className="w-4 h-4 mr-1.5 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span className="text-sm font-semibold text-gray-600 tracking-wider">年龄</span>
+                <span className="text-sm font-semibold text-gray-600 tracking-wider">{t('profile.age')}</span>
               </div>
               <span className="text-sm text-gray-800 font-medium tracking-wide">
-                {calculateAge(userInfo.birthday) || '未设置'}岁
+                {userInfo.birthday ? t('profile.ageWithUnit', { age: calculateAge(userInfo.birthday) }) : t('profile.notSet')}
               </span>
             </div>
 
@@ -680,7 +712,7 @@ const ProfilePage = () => {
                 <svg className="w-4 h-4 mr-1.5 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
-                <span className="text-sm font-semibold text-gray-600 tracking-wider">职称</span>
+                <span className="text-sm font-semibold text-gray-600 tracking-wider">{t('profile.titleField')}</span>
               </div>
               {editingField === 'title' ? (
                 <div className="flex items-center space-x-2 flex-1">
@@ -688,8 +720,14 @@ const ProfilePage = () => {
                     type="text"
                     value={editingValue}
                     onChange={(e) => setEditingValue(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !isUpdating) {
+                        e.preventDefault();
+                        handleSaveEditField();
+                      }
+                    }}
                     className="flex-1 px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-                    placeholder="请输入职称"
+                    placeholder={t('profile.titlePlaceholder')}
                     autoFocus
                   />
                   <button
@@ -711,7 +749,7 @@ const ProfilePage = () => {
                   className="text-sm text-gray-800 font-medium tracking-wide cursor-pointer hover:text-teal-500"
                   onClick={() => handleStartEditField('title', userInfo.title)}
                 >
-                  {userInfo.title || '未设置'}
+                  {userInfo.title || t('profile.notSet')}
                 </span>
               )}
             </div>
@@ -722,7 +760,7 @@ const ProfilePage = () => {
                 <svg className="w-4 h-4 mr-1.5 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span className="text-sm font-semibold text-gray-600 tracking-wider">状态</span>
+                <span className="text-sm font-semibold text-gray-600 tracking-wider">{t('profile.status')}</span>
               </div>
               <span className="text-sm text-gray-800 font-medium tracking-wide">
                 {getStatusText(userInfo.status)}

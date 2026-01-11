@@ -17,7 +17,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
 
     // Validate form
     if (!username.trim() || !password.trim()) {
-      setError('请输入用户名和密码');
+      setError(t('login.errorMissingCredentials'));
       return;
     }
 
@@ -36,7 +36,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
             </div>
-            <h2 className="text-2xl font-bold text-gray-800">中医论坛登录</h2>
+            <h2 className="text-2xl font-bold text-gray-800">{t('login.title')}</h2>
           </div>
           <button 
             onClick={onClose} 
@@ -51,9 +51,9 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
         {/* 中医装饰元素 */}
         <div className="text-center mb-6">
           <div className="inline-block bg-green-100 text-green-800 px-4 py-1 rounded-full text-sm font-medium mb-2">
-            欢迎回到中医社区
+            {t('login.badge')}
           </div>
-          <p className="text-sm text-gray-600">登录后可参与讨论、分享经验</p>
+          <p className="text-sm text-gray-600">{t('login.subtitle')}</p>
         </div>
 
         {error && (
@@ -69,7 +69,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
               <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
               </svg>
-              用户名
+              {t('login.username')}
             </label>
             <input
               type="text"
@@ -77,7 +77,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="w-full px-4 py-3 border border-green-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white shadow-sm"
-              placeholder="请输入您的用户名"
+              placeholder={t('login.usernamePlaceholder')}
             />
           </div>
 
@@ -87,7 +87,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
               <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
-              密码
+              {t('login.password')}
             </label>
             <input
               type="password"
@@ -95,7 +95,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-3 border border-green-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent bg-white shadow-sm"
-              placeholder="请输入您的密码"
+              placeholder={t('login.passwordPlaceholder')}
             />
           </div>
 
@@ -106,7 +106,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
               onClick={onClose} 
               className="px-6 py-3 bg-white border border-green-200 text-gray-700 rounded-md hover:bg-green-100 transition-all shadow-sm"
             >
-              取消
+              {t('login.cancel')}
             </button>
             <button 
               type="submit" 
@@ -115,7 +115,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
               </svg>
-              登录
+              {t('login.login')}
             </button>
           </div>
         </form>
@@ -130,7 +130,7 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
             }}
             className="w-full px-6 py-3 bg-white border border-green-300 text-green-700 rounded-md hover:bg-green-50 transition-all shadow-sm"
           >
-            <span className="text-sm font-medium">没有账号？立即注册</span>
+            <span className="text-sm font-medium">{t('login.noAccountRegister')}</span>
           </button>
         </div>
         

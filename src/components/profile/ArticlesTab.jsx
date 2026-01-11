@@ -130,7 +130,78 @@ const ArticlesTab = ({ currentPage, setCurrentPage, setTotalPages, setTotalItems
                     </Link>
                     
                     <div className="mt-2 text-sm text-gray-600 line-clamp-2">
-                      {article.content.replace(/<[^>]*>/g, '').substring(0, 150)}...
+                      {(() => {
+                        // Helper function to strip HTML tags
+                        const stripHtmlTags = (html) => {
+                          if (!html) return '';
+                          const tmp = document.createElement('div');
+                          tmp.innerHTML = html;
+                          return (tmp.textContent || tmp.innerText || '').replace(/\s+/g, ' ').trim();
+                        };
+
+                        // Helper function to strip Markdown syntax
+                        const stripMarkdown = (text) => {
+                          if (!text) return '';
+                          
+                          // Remove code blocks (```code```)
+                          text = text.replace(/```[\s\S]*?```/g, '');
+                          
+                          // Remove inline code (`code`)
+                          text = text.replace(/`[^`]*`/g, '');
+                          
+                          // Remove headers (# ## ### etc.)
+                          text = text.replace(/^#{1,6}\s+(.*)$/gm, '$1');
+                          
+                          // Remove bold/italic (**text** or __text__)
+                          text = text.replace(/\*\*([^*]+)\*\*/g, '$1');
+                          text = text.replace(/__([^_]+)__/g, '$1');
+                          text = text.replace(/\*([^*]+)\*/g, '$1');
+                          text = text.replace(/_([^_]+)_/g, '$1');
+                          
+                          // Remove links [text](url)
+                          text = text.replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1');
+                          
+                          // Remove images ![alt](url)
+                          text = text.replace(/!\[([^\]]*)\]\([^\)]+\)/g, '');
+                          
+                          // Remove list markers (-, *, 1., etc.)
+                          text = text.replace(/^[\s]*[-*+]\s+/gm, '');
+                          text = text.replace(/^[\s]*\d+\.\s+/gm, '');
+                          
+                          // Remove blockquotes (>)
+                          text = text.replace(/^>\s+/gm, '');
+                          
+                          // Remove horizontal rules (---, ***)
+                          text = text.replace(/^[-*]{3,}$/gm, '');
+                          
+                          // Remove strikethrough (~~text~~)
+                          text = text.replace(/~~([^~]+)~~/g, '$1');
+                          
+                          // Remove reference-style links [text][ref]
+                          text = text.replace(/\[([^\]]+)\]\[[^\]]+\]/g, '$1');
+                          
+                          // Clean up extra whitespace
+                          text = text.replace(/\s+/g, ' ').trim();
+                          
+                          return text;
+                        };
+
+                        // Combined function to strip both HTML and Markdown
+                        const stripContent = (content) => {
+                          if (!content) return '';
+                          
+                          // First strip HTML tags if present
+                          let text = stripHtmlTags(content);
+                          
+                          // Then strip Markdown syntax
+                          text = stripMarkdown(text);
+                          
+                          return text;
+                        };
+
+                        const cleanContent = stripContent(article.content);
+                        return cleanContent.length > 150 ? cleanContent.substring(0, 150) + '...' : cleanContent;
+                      })()}
                     </div>
                     
                     <div className="flex justify-between items-center mt-4 text-xs text-gray-500">

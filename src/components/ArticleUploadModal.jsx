@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import api from '../services/api';
 
 const ArticleUploadModal = ({ isOpen, onClose, onSuccess, article }) => {
+  const { t } = useTranslation();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [categoryId, setCategoryId] = useState('');
@@ -40,26 +42,26 @@ const ArticleUploadModal = ({ isOpen, onClose, onSuccess, article }) => {
 
     // Validate form
     if (!title.trim()) {
-      setError('文章标题不能为空');
+      setError(t('profile.articleUpload.errorTitleEmpty'));
       setLoading(false);
       return;
     }
 
     if (!content.trim()) {
-      setError('文章内容不能为空');
+      setError(t('profile.articleUpload.errorContentEmpty'));
       setLoading(false);
       return;
     }
 
     if (!categoryId.trim()) {
-      setError('分类ID不能为空');
+      setError(t('profile.articleUpload.errorCategoryEmpty'));
       setLoading(false);
       return;
     }
 
     const userId = api.getCurrentUserId();
     if (!userId) {
-      setError('用户未登录');
+      setError(t('profile.articleUpload.errorNotLoggedIn'));
       setLoading(false);
       return;
     }
@@ -135,7 +137,7 @@ const ArticleUploadModal = ({ isOpen, onClose, onSuccess, article }) => {
       onClose();
     } catch (err) {
       console.error(article ? '=============== Article update failed:' : '=============== Article upload failed:', err);
-      setError(err.message || (article ? '文章更新失败，请重试' : '文章上传失败，请重试'));
+      setError(err.message || (article ? t('profile.articleUpload.errorUpdateFailed') : t('profile.articleUpload.errorUploadFailed')));
     } finally {
       setLoading(false);
     }
@@ -145,7 +147,7 @@ const ArticleUploadModal = ({ isOpen, onClose, onSuccess, article }) => {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 overflow-y-auto">
       <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl my-8 mx-4">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">{article ? '更新文章' : '上传文章'}</h2>
+          <h2 className="text-xl font-bold">{article ? t('profile.articleUpload.updateTitle') : t('profile.articleUpload.title')}</h2>
           <button 
             onClick={onClose} 
             className="text-gray-500 hover:text-gray-700 transition-colors"
@@ -165,7 +167,7 @@ const ArticleUploadModal = ({ isOpen, onClose, onSuccess, article }) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-              文章标题 <span className="text-red-500">*</span>
+              {t('profile.articleUpload.articleTitle')} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -173,21 +175,21 @@ const ArticleUploadModal = ({ isOpen, onClose, onSuccess, article }) => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="输入文章标题"
+              placeholder={t('profile.articleUpload.articleTitlePlaceholder')}
               maxLength={100}
             />
           </div>
 
           <div>
             <label htmlFor="content" className="block text-sm font-medium text-gray-700 mb-1">
-              文章内容 <span className="text-red-500">*</span>
+              {t('profile.articleUpload.articleContent')} <span className="text-red-500">*</span>
             </label>
             <textarea
               id="content"
               value={content}
               onChange={(e) => setContent(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="输入文章内容"
+              placeholder={t('profile.articleUpload.articleContentPlaceholder')}
               rows={6}
               maxLength={5000}
             />
@@ -195,7 +197,7 @@ const ArticleUploadModal = ({ isOpen, onClose, onSuccess, article }) => {
 
           <div>
             <label htmlFor="categoryId" className="block text-sm font-medium text-gray-700 mb-1">
-              分类ID <span className="text-red-500">*</span>
+              {t('profile.articleUpload.categoryId')} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -203,14 +205,14 @@ const ArticleUploadModal = ({ isOpen, onClose, onSuccess, article }) => {
               value={categoryId}
               onChange={(e) => setCategoryId(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="输入分类ID"
+              placeholder={t('profile.articleUpload.categoryIdPlaceholder')}
               maxLength={10}
             />
           </div>
 
           <div>
             <label htmlFor="tags" className="block text-sm font-medium text-gray-700 mb-1">
-              文章标签
+              {t('profile.articleUpload.tags')}
             </label>
             <input
               type="text"
@@ -218,14 +220,14 @@ const ArticleUploadModal = ({ isOpen, onClose, onSuccess, article }) => {
               value={tags}
               onChange={(e) => setTags(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="输入文章标签，用逗号分隔"
+              placeholder={t('profile.articleUpload.tagsPlaceholder')}
               maxLength={100}
             />
           </div>
 
           <div>
             <label htmlFor="coverImage" className="block text-sm font-medium text-gray-700 mb-1">
-              文章封面图片
+              {t('profile.articleUpload.coverImage')}
             </label>
             <div className="mt-1 flex items-center gap-4">
               {coverImagePreview && (
@@ -257,7 +259,7 @@ const ArticleUploadModal = ({ isOpen, onClose, onSuccess, article }) => {
                 className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
               />
             </div>
-            <p className="mt-1 text-xs text-gray-500">上传图片用于文章封面</p>
+            <p className="mt-1 text-xs text-gray-500">{t('profile.articleUpload.coverImageHint')}</p>
           </div>
 
           <div className="flex justify-end space-x-3 pt-4">
@@ -267,14 +269,14 @@ const ArticleUploadModal = ({ isOpen, onClose, onSuccess, article }) => {
               className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
               disabled={loading}
             >
-              取消
+              {t('profile.articleUpload.cancel')}
             </button>
             <button
               type="submit"
               className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-400"
               disabled={loading}
             >
-              {loading ? (article ? '更新中...' : '上传中...') : (article ? '更新文章' : '上传文章')}
+              {loading ? (article ? t('profile.articleUpload.updating') : t('profile.articleUpload.uploading')) : (article ? t('profile.articleUpload.update') : t('profile.articleUpload.upload'))}
             </button>
           </div>
         </form>

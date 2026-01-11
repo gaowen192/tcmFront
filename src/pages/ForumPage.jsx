@@ -79,7 +79,7 @@ function ForumPage({ isLoggedIn, onOpenLoginModal }) {
           
           return {
             id: post.id,
-            author: `用户${post.userId}`, // Since we don't have actual author names in API response
+            author: post.realName || post.userRealName || `用户${post.userId}`, // Use realName if available, fallback to userId
             date: new Date(post.createdAt).toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }),
             replies: post.replyCount,
             title: post.title,

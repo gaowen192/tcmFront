@@ -144,6 +144,66 @@ const ProfessionalArticlesPage = () => {
     return (tmp.textContent || tmp.innerText || '').replace(/\s+/g, ' ').trim();
   };
 
+  // Helper function to strip Markdown syntax
+  const stripMarkdown = (text) => {
+    if (!text) return '';
+    
+    // Remove code blocks (```code```)
+    text = text.replace(/```[\s\S]*?```/g, '');
+    
+    // Remove inline code (`code`)
+    text = text.replace(/`[^`]*`/g, '');
+    
+    // Remove headers (# ## ### etc.)
+    text = text.replace(/^#{1,6}\s+(.*)$/gm, '$1');
+    
+    // Remove bold/italic (**text** or __text__)
+    text = text.replace(/\*\*([^*]+)\*\*/g, '$1');
+    text = text.replace(/__([^_]+)__/g, '$1');
+    text = text.replace(/\*([^*]+)\*/g, '$1');
+    text = text.replace(/_([^_]+)_/g, '$1');
+    
+    // Remove links [text](url)
+    text = text.replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1');
+    
+    // Remove images ![alt](url)
+    text = text.replace(/!\[([^\]]*)\]\([^\)]+\)/g, '');
+    
+    // Remove list markers (-, *, 1., etc.)
+    text = text.replace(/^[\s]*[-*+]\s+/gm, '');
+    text = text.replace(/^[\s]*\d+\.\s+/gm, '');
+    
+    // Remove blockquotes (>)
+    text = text.replace(/^>\s+/gm, '');
+    
+    // Remove horizontal rules (---, ***)
+    text = text.replace(/^[-*]{3,}$/gm, '');
+    
+    // Remove strikethrough (~~text~~)
+    text = text.replace(/~~([^~]+)~~/g, '$1');
+    
+    // Remove reference-style links [text][ref]
+    text = text.replace(/\[([^\]]+)\]\[[^\]]+\]/g, '$1');
+    
+    // Clean up extra whitespace
+    text = text.replace(/\s+/g, ' ').trim();
+    
+    return text;
+  };
+
+  // Combined function to strip both HTML and Markdown
+  const stripContent = (content) => {
+    if (!content) return '';
+    
+    // First strip HTML tags if present
+    let text = stripHtmlTags(content);
+    
+    // Then strip Markdown syntax
+    text = stripMarkdown(text);
+    
+    return text;
+  };
+
   return (
     <div className="container mx-auto max-w-5xl p-4">
       <h1 className="text-3xl font-bold mb-4 text-green-800">{t('home.tcm.professionalArticles')}</h1>
@@ -278,7 +338,7 @@ const ProfessionalArticlesPage = () => {
                   <Link to={`/professional-articles/${article.id}`} className="block">
                     <h3 className="text-xl font-semibold mb-2 text-green-800 hover:text-green-600 transition-colors">{article.title}</h3>
                   </Link>
-                  <p className="text-gray-600 mb-3 line-clamp-2">{stripHtmlTags(article.content)}</p>
+                  <p className="text-gray-600 mb-3 line-clamp-2">{stripContent(article.content)}</p>
                   
                   {/* Tags */}
                   {article.tags && (

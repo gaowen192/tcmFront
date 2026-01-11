@@ -198,7 +198,7 @@ const VideoList = React.memo(({ columns = 'grid-cols-1 md:grid-cols-2 lg:grid-co
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold text-gray-800">{t('home.tcm.tcmVideoList')}</h2>
         <span className="text-sm text-gray-500">
-          共 {totalPages} 页，已加载 {videos.length} 个视频
+          {t('home.tcm.videoPageSummary', { totalPages, count: videos.length })}
         </span>
       </div>
       
@@ -216,25 +216,25 @@ const VideoList = React.memo(({ columns = 'grid-cols-1 md:grid-cols-2 lg:grid-co
           {isLoading && (
             <div className="text-center py-8">
               <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
-              <p className="mt-2 text-gray-600">加载更多视频...</p>
+              <p className="mt-2 text-gray-600">{t('home.tcm.loadingMoreVideos')}</p>
             </div>
           )}
         </div>
       ) : isLoading ? (
         <div className="text-center py-10">
           <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
-          <p className="mt-2 text-gray-600">加载视频中...</p>
+          <p className="mt-2 text-gray-600">{t('home.tcm.loadingVideos')}</p>
         </div>
       ) : (
         <div className="bg-white border border-green-100 rounded-lg p-10 text-center">
-          <p className="text-gray-500">暂无视频</p>
+          <p className="text-gray-500">{t('home.tcm.noVideos')}</p>
         </div>
       )}
       
       {/* No more videos message */}
       {!hasMore && videos.length > 0 && (
         <div className="text-center py-8">
-          <p className="text-gray-500">已加载全部视频</p>
+          <p className="text-gray-500">{t('home.tcm.allVideosLoaded')}</p>
         </div>
       )}
     </div>

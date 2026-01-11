@@ -24,8 +24,8 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    lng: 'zh', // 默认语言
-    fallbackLng: 'zh', // 回退语言
+    lng: 'yue', // 默认语言改为粤语
+    fallbackLng: 'zh', // 回退语言仍然使用简体中文
     interpolation: {
       escapeValue: false // React 已经转义了
     }
