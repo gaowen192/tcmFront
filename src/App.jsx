@@ -14,6 +14,9 @@ import LoginModal from './components/LoginModal';
 import { login } from './services/api';
 import './App.css';
 import React, { useState, useEffect } from 'react';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
+const GOOGLE_CLIENT_ID = '705387629180-412sc6q4l3o7rutdh8hf1te8foaem680.apps.googleusercontent.com';
 
 function AppContent() {
   const { t } = useTranslation();
@@ -313,9 +316,11 @@ const handleLogout = () => {
 
 function App() {
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
+      <Router>
+        <AppContent />
+      </Router>
+    </GoogleOAuthProvider>
   );
 }
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 import api from '../services/api';
 
 const PostVersionDetailModal = ({ isOpen, onClose, postId, version }) => {
@@ -79,8 +80,24 @@ const PostVersionDetailModal = ({ isOpen, onClose, postId, version }) => {
 
             <div className="mb-4">
               <h3 className="text-lg font-bold text-gray-800 mb-2">内容</h3>
-              <div className="text-gray-700 whitespace-pre-line border border-gray-100 rounded-md p-4 bg-gray-50">
-                {versionData.content}
+              <div className="text-gray-700 border border-gray-100 rounded-md p-4 bg-gray-50">
+                {/* Check if content already contains HTML tags */}
+                {(() => {
+                  const hasHtml = /<[^>]+>/.test(versionData.content);
+                  
+                  if (hasHtml) {
+                    // If content contains HTML, render it directly
+                    return (
+                      <div 
+                        className="post-content-html"
+                        dangerouslySetInnerHTML={{ __html: versionData.content }}
+                      />
+                    );
+                  } else {
+                    // Render Markdown content
+                    return <ReactMarkdown>{versionData.content}</ReactMarkdown>;
+                  }
+                })()}
               </div>
             </div>
 

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
+import axios from 'axios';
 
 const LoginModal = ({ isOpen, onClose, onLogin }) => {
   const { t } = useTranslation();
@@ -8,6 +10,58 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+
+  // Handle Google login
+  const handleGoogleLogin = async (response) => {
+    try {
+      console.log('=============== Google login response:', response);
+      
+      // Send Google token to backend for verification
+      const googleResponse = await axios.post('/api/google/callback', {
+        token: response.credential
+      });
+      
+      console.log('=============== Google login backend response:', googleResponse.data);
+      
+      if (googleResponse.data && googleResponse.data.code === 200) {
+        // Google login successful, same as regular login
+        const userData = googleResponse.data.data;
+        
+        // Save user information to localStorage
+        localStorage.setItem('token', userData.accessToken);
+        localStorage.setItem('username', userData.username);
+        localStorage.setItem('realName', userData.realName);
+        localStorage.setItem('userId', userData.userId);
+        localStorage.setItem('role', userData.role);
+        localStorage.setItem('userType', userData.userType);
+        localStorage.setItem('status', userData.status);
+        localStorage.setItem('tokenExpireTime', userData.tokenExpireTime);
+        
+        // Call onLogin to update app state
+        onLogin(userData);
+        
+        // Close login modal
+        onClose();
+        
+        // Show success message
+        alert(googleResponse.data.message || 'Google登录成功！');
+      } else {
+        // Google login failed
+        console.error('=============== Google login failed:', googleResponse.data.message);
+        setError(googleResponse.data.message || 'Google登录失败，请稍后重试。');
+      }
+    } catch (error) {
+      // Handle Google login errors
+      console.error('=============== Google login error:', error);
+      setError('Google登录失败，请检查网络连接或稍后重试。');
+    }
+  };
+
+  // Handle Google login error
+  const handleGoogleLoginError = (error) => {
+    console.error('=============== Google login error:', error);
+    setError('Google登录失败，请稍后重试。');
+  };
 
   if (!isOpen) return null;
 
@@ -119,6 +173,28 @@ const LoginModal = ({ isOpen, onClose, onLogin }) => {
             </button>
           </div>
         </form>
+
+        {/* Google 登录按钮 */}
+        <div className="mt-6">
+          <div className="flex items-center justify-center">
+            <div className="h-px w-full bg-green-200"></div>
+            <span className="px-3 text-sm text-gray-500">或使用</span>
+            <div className="h-px w-full bg-green-200"></div>
+          </div>
+          <div className="mt-4">
+            <GoogleLogin
+              onSuccess={handleGoogleLogin}
+              onError={handleGoogleLoginError}
+              useOneTap
+              theme="outline"
+              size="large"
+              text="signin_with"
+              shape="rectangular"
+              logo_alignment="left"
+              width="100%"
+            />
+          </div>
+        </div>
 
         {/* 注册按钮 */}
         <div className="mt-4">

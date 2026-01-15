@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import ReactMarkdown from 'react-markdown';
 import api from '../services/api';
 import PostHistoryModal from '../components/PostHistoryModal';
 import PostVersionDetailModal from '../components/PostVersionDetailModal';
@@ -336,18 +337,8 @@ const PostDetailPage = () => {
                 />
               );
             } else {
-              // If plain text, split by double newlines for paragraphs
-              const segments = post.content.split(/\n\s*\n/).filter(segment => segment.trim());
-              
-              return segments.map((segment, index) => (
-                <p 
-                  key={index} 
-                  className="mb-4 last:mb-0"
-                  dangerouslySetInnerHTML={{ 
-                    __html: segment.trim().replace(/\n/g, '<br>') 
-                  }}
-                />
-              ));
+              // Render Markdown content
+              return <ReactMarkdown>{post.content}</ReactMarkdown>;
             }
           })() : (
             <p className="text-gray-500">暂无内容</p>
